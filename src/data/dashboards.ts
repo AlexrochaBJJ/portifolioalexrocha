@@ -1,8 +1,5 @@
-import dashboardVendasAnual from "@/assets/dashboard-vendas-anual.jpg";
-import dashboardMetas from "@/assets/dashboard-metas.jpg";
-import dashboardVendas from "@/assets/dashboard-vendas.jpg";
-import dashboardRh from "@/assets/dashboard-rh.jpg";
-import dashboardMetas2 from "@/assets/dashboard-metas2.jpg";
+import { BarChart3, Target, ShoppingCart, Users, Gauge } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export interface Dashboard {
   id: string;
@@ -10,7 +7,7 @@ export interface Dashboard {
   description: string;
   category: string;
   embedUrl: string;
-  previewImage: string;
+  icon: LucideIcon;
 }
 
 export const dashboards: Dashboard[] = [
@@ -22,7 +19,7 @@ export const dashboards: Dashboard[] = [
     category: "Vendas",
     embedUrl:
       "https://app.powerbi.com/view?r=eyJrIjoiN2U3YmYxNTAtOWM3Ni00NTk1LWE4YmQtZjJiNzQ2NmQ0ZWU4IiwidCI6IjY4ZTJiZjNhLWI1NmMtNDgzMS05OGQyLWViMzhlNjMxMWZlNSJ9",
-    previewImage: dashboardVendasAnual,
+    icon: BarChart3,
   },
   {
     id: "metas",
@@ -32,7 +29,7 @@ export const dashboards: Dashboard[] = [
     category: "Metas",
     embedUrl:
       "https://app.powerbi.com/view?r=eyJrIjoiZGFiNjU3ZjktNzIzOS00NzZmLTg2ZDktYWU1N2UxNDNlYzI5IiwidCI6IjY4ZTJiZjNhLWI1NmMtNDgzMS05OGQyLWViMzhlNjMxMWZlNSJ9",
-    previewImage: dashboardMetas,
+    icon: Target,
   },
   {
     id: "vendas",
@@ -42,7 +39,7 @@ export const dashboards: Dashboard[] = [
     category: "Vendas",
     embedUrl:
       "https://app.powerbi.com/view?r=eyJrIjoiNTJjY2JhZjQtZGM2Ni00NTQzLThmMDMtYTUzYjdlOGE1MzQ2IiwidCI6IjY4ZTJiZjNhLWI1NmMtNDgzMS05OGQyLWViMzhlNjMxMWZlNSJ9",
-    previewImage: dashboardVendas,
+    icon: ShoppingCart,
   },
   {
     id: "rh",
@@ -52,7 +49,7 @@ export const dashboards: Dashboard[] = [
     category: "RH",
     embedUrl:
       "https://app.powerbi.com/view?r=eyJrIjoiMzhiZjEzMmYtZjRhNy00ZmIxLWJmZDMtNWNjZTQxYTQxNWI1IiwidCI6IjY4ZTJiZjNhLWI1NmMtNDgzMS05OGQyLWViMzhlNjMxMWZlNSJ9",
-    previewImage: dashboardRh,
+    icon: Users,
   },
   {
     id: "metas-v2",
@@ -62,6 +59,6 @@ export const dashboards: Dashboard[] = [
     category: "Metas",
     embedUrl:
       "https://app.powerbi.com/view?r=eyJrIjoiNWZlNTQwZTktZjI3ZS00OWM5LTkzOTgtODA4YTJkZDJhZjVjIiwidCI6IjY4ZTJiZjNhLWI1NmMtNDgzMS05OGQyLWViMzhlNjMxMWZlNSJ9",
-    previewImage: dashboardMetas2,
+    icon: Gauge,
   },
 ];

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { BarChart3, TrendingUp, Users } from "lucide-react";
+import { BarChart3, TrendingUp, Users, Mail, Phone } from "lucide-react";
 
 const stats = [
   { icon: BarChart3, label: "Dashboards", value: "5+" },
@@ -50,7 +50,7 @@ const HeroSection = () => {
         </motion.p>
 
         <motion.p
-          className="text-sm text-muted-foreground/70 max-w-xl mx-auto mb-12 font-body"
+          className="text-sm text-muted-foreground/70 max-w-xl mx-auto mb-10 font-body"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
@@ -58,6 +58,31 @@ const HeroSection = () => {
           Todos os dashboards contêm apenas dados fictícios, servindo como
           demonstração das funcionalidades e possibilidades.
         </motion.p>
+
+        {/* Contact info */}
+        <motion.div
+          className="flex flex-wrap justify-center gap-4 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.45, ease: "easeOut" }}
+        >
+          <a
+            href="https://wa.me/5521981303694"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-card text-sm font-body text-muted-foreground hover:text-primary hover:border-primary/30 transition-all duration-300"
+          >
+            <Phone className="w-4 h-4 text-primary" />
+            (21) 98130-3694
+          </a>
+          <a
+            href="mailto:Allexdasilvarocha@gmail.com"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-card text-sm font-body text-muted-foreground hover:text-primary hover:border-primary/30 transition-all duration-300"
+          >
+            <Mail className="w-4 h-4 text-primary" />
+            Allexdasilvarocha@gmail.com
+          </a>
+        </motion.div>
 
         <motion.div
           className="flex flex-wrap justify-center gap-6 md:gap-10"
