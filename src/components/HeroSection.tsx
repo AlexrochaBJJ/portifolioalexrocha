@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { BarChart3, TrendingUp, Users, Mail, Phone } from "lucide-react";
-import alexProfile from "@/assets/alex-profile.png";
 
 const stats = [
   { icon: BarChart3, label: "Dashboards", value: "5+" },
@@ -17,27 +16,10 @@ const HeroSection = () => {
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-amber-glow/5 blur-[100px] animate-pulse-glow" style={{ animationDelay: "1.5s" }} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        {/* Profile photo */}
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <div className="relative w-36 h-36 md:w-44 md:h-44 mx-auto">
-            <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-primary via-primary/50 to-accent/30 blur-sm animate-pulse-glow" />
-            <img
-              src={alexProfile}
-              alt="Alex Rocha - Analista de BI"
-              className="relative w-full h-full rounded-full object-cover border-2 border-primary/30 shadow-lg"
-            />
-          </div>
-        </motion.div>
-
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-8">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
