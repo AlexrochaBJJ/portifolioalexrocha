@@ -1,0 +1,1 @@
+ALTER TABLE public.flowchart_nodes ADD COLUMN IF NOT EXISTS items text[] NOT NULL DEFAULT '{}'::text[];
