@@ -156,18 +156,23 @@ const CrudList = ({
       );
     }
     if (field.type === "select") {
+      const choices =
+        field.choices ?? (field.options ?? []).map((o) => ({ label: o, value: o }));
       return (
         <Select
           value={value || ""}
-          onValueChange={(v) => setForm({ ...form, [field.name]: v })}
+          onValueChange={(v) =>
+            setForm({ ...form, [field.name]: v === "__none__" ? "" : v })
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="Selecione" />
           </SelectTrigger>
           <SelectContent>
-            {(field.options ?? []).map((opt) => (
-              <SelectItem key={opt} value={opt}>
-                {opt}
+            {!field.required && <SelectItem value="__none__">— Nenhum —</SelectItem>}
+            {choices.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
               </SelectItem>
             ))}
           </SelectContent>
