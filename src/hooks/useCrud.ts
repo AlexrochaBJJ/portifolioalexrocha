@@ -47,7 +47,8 @@ export const useCrud = (table: TableName, invalidateKeys: string[]) => {
       done(message);
       return true;
     },
-    silentUpdate: async (id: string, values: Record<string, unknown>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    silentUpdate: async (id: string, values: any) => {
       const { error } = await supabase.from(table).update(values).eq("id", id);
       if (error) return fail(error);
       invalidateKeys.forEach((key) => qc.invalidateQueries({ queryKey: [key] }));
