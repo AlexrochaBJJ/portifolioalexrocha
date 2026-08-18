@@ -40,16 +40,56 @@ export const useSkills = () =>
     },
   });
 
-export const useCareer = () =>
+export const useCareer = (includeUnpublished = false) =>
   useQuery({
-    queryKey: ["career"],
+    queryKey: ["career", includeUnpublished],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("career_experiences")
-        .select("*")
-        .order("sort_order");
+      let query = supabase.from("career_experiences").select("*").order("sort_order");
+      if (!includeUnpublished) query = query.eq("is_published", true);
+      const { data, error } = await query;
       if (error) throw error;
       return data;
+    },
+  });
+
+export const useExperienceBySlug = (slug?: string) =>
+  useQuery({
+    queryKey: ["experience", slug],
+    enabled: !!slug,
+    queryFn: async () => {
+      const { data: experience, error } = await supabase
+        .from("career_experiences")
+        .select("*")
+        .eq("slug", slug!)
+        .maybeSingle();
+      if (error) throw error;
+      if (!experience) return null;
+
+      const { data: charts } = await supabase
+        .from("flowcharts")
+        .select("*")
+        .eq("experience_id", experience.id)
+        .eq("is_published", true)
+        .order("sort_order");
+
+      const ids = (charts ?? []).map((c) => c.id);
+      if (ids.length === 0) return { experience, charts: [], nodes: [], edges: [] };
+
+      const [{ data: nodes }, { data: edges }] = await Promise.all([
+        supabase
+          .from("flowchart_nodes")
+          .select("*")
+          .in("flowchart_id", ids)
+          .order("sort_order"),
+        supabase.from("flowchart_edges").select("*").in("flowchart_id", ids),
+      ]);
+
+      return {
+        experience,
+        charts: charts ?? [],
+        nodes: nodes ?? [],
+        edges: edges ?? [],
+      };
     },
   });
 
@@ -90,12 +130,13 @@ export const useDashboards = (includeUnpublished = false) =>
     },
   });
 
-export const useFlowcharts = (includeUnpublished = false) =>
+export const useFlowcharts = (includeUnpublished = false, experienceId?: string) =>
   useQuery({
-    queryKey: ["flowcharts", includeUnpublished],
+    queryKey: ["flowcharts", includeUnpublished, experienceId ?? "all"],
     queryFn: async () => {
       let query = supabase.from("flowcharts").select("*").order("sort_order");
       if (!includeUnpublished) query = query.eq("is_published", true);
+      if (experienceId) query = query.eq("experience_id", experienceId);
       const { data, error } = await query;
       if (error) throw error;
       return data;

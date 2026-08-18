@@ -3,11 +3,12 @@ import { Workflow } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CrudList from "./CrudList";
 import FlowchartEditor from "./FlowchartEditor";
-import { useFlowcharts, type Flowchart } from "@/hooks/useContent";
+import { useCareer, useFlowcharts, type Flowchart } from "@/hooks/useContent";
 import { useCrud } from "@/hooks/useCrud";
 
 const FlowchartsManager = () => {
   const { data, isLoading } = useFlowcharts(true);
+  const { data: career } = useCareer(true);
   const crud = useCrud("flowcharts", ["flowcharts"]);
   const [editing, setEditing] = useState<Flowchart | null>(null);
 
@@ -34,6 +35,15 @@ const FlowchartsManager = () => {
           placeholder: "processo-de-compra-direta",
         },
         { name: "context", label: "Contexto / empresa", maxLength: 150 },
+        {
+          name: "experience_id",
+          label: "Experiência vinculada",
+          type: "select",
+          choices: (career ?? []).map((e) => ({
+            label: `${e.role_title} — ${e.company}`,
+            value: e.id,
+          })),
+        },
         { name: "summary", label: "Resumo", type: "textarea", maxLength: 1500 },
         { name: "tags", label: "Tags (separadas por vírgula)", type: "tags" },
         { name: "sort_order", label: "Ordem", type: "number" },

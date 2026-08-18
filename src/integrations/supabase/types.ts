@@ -19,36 +19,66 @@ export type Database = {
           company: string
           created_at: string
           description: string
+          employment_type: string | null
           highlights: string[]
           id: string
+          is_published: boolean
           location: string | null
+          logo_url: string | null
+          long_description: string
           period: string
+          responsibilities: string[]
+          results: string[]
           role_title: string
+          sector: string | null
+          short_summary: string
+          slug: string
           sort_order: number
+          tools: string[]
           updated_at: string
         }
         Insert: {
           company: string
           created_at?: string
           description?: string
+          employment_type?: string | null
           highlights?: string[]
           id?: string
+          is_published?: boolean
           location?: string | null
+          logo_url?: string | null
+          long_description?: string
           period?: string
+          responsibilities?: string[]
+          results?: string[]
           role_title: string
+          sector?: string | null
+          short_summary?: string
+          slug: string
           sort_order?: number
+          tools?: string[]
           updated_at?: string
         }
         Update: {
           company?: string
           created_at?: string
           description?: string
+          employment_type?: string | null
           highlights?: string[]
           id?: string
+          is_published?: boolean
           location?: string | null
+          logo_url?: string | null
+          long_description?: string
           period?: string
+          responsibilities?: string[]
+          results?: string[]
           role_title?: string
+          sector?: string | null
+          short_summary?: string
+          slug?: string
           sort_order?: number
+          tools?: string[]
           updated_at?: string
         }
         Relationships: []
@@ -231,6 +261,7 @@ export type Database = {
         Row: {
           context: string
           created_at: string
+          experience_id: string | null
           id: string
           is_published: boolean
           slug: string
@@ -243,6 +274,7 @@ export type Database = {
         Insert: {
           context?: string
           created_at?: string
+          experience_id?: string | null
           id?: string
           is_published?: boolean
           slug: string
@@ -255,6 +287,7 @@ export type Database = {
         Update: {
           context?: string
           created_at?: string
+          experience_id?: string | null
           id?: string
           is_published?: boolean
           slug?: string
@@ -264,7 +297,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "flowcharts_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "career_experiences"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profile_about: {
         Row: {
