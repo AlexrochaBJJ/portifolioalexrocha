@@ -117,6 +117,19 @@ const AdminLogin = () => {
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting ? "Entrando..." : "Entrar"}
             </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full"
+              disabled={submitting}
+              onClick={handleSignUp}
+            >
+              Primeiro acesso: criar conta de administrador
+            </Button>
+            <p className="text-xs text-muted-foreground/70 font-body">
+              A criação de administrador funciona apenas no primeiro acesso, enquanto
+              nenhum administrador existir.
+            </p>
           </form>
 
           {session && !isAdmin && !loading && (
