@@ -9,6 +9,7 @@ import Dashboards from "./pages/Dashboards";
 import WebApps from "./pages/WebApps";
 import Experiences from "./pages/Experiences";
 import ExperienceDetail from "./pages/ExperienceDetail";
+import FlowchartDetail from "./pages/FlowchartDetail";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
