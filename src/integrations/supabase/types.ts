@@ -207,6 +207,7 @@ export type Database = {
           description: string
           flowchart_id: string
           id: string
+          items: string[]
           node_type: string
           notes: string | null
           owner: string | null
@@ -222,6 +223,7 @@ export type Database = {
           description?: string
           flowchart_id: string
           id?: string
+          items?: string[]
           node_type?: string
           notes?: string | null
           owner?: string | null
@@ -237,6 +239,7 @@ export type Database = {
           description?: string
           flowchart_id?: string
           id?: string
+          items?: string[]
           node_type?: string
           notes?: string | null
           owner?: string | null
