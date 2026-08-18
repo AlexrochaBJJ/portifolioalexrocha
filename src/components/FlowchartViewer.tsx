@@ -11,13 +11,10 @@ import {
 import "@xyflow/react/dist/style.css";
 import { X, User, Monitor, StickyNote } from "lucide-react";
 import type { FlowNode, FlowEdge } from "@/hooks/useContent";
+import StepNode from "@/components/flow/StepNode";
+import { computeFlowLayout } from "@/lib/flowLayout";
 
-const typeStyle: Record<string, string> = {
-  start: "hsl(var(--primary))",
-  end: "hsl(var(--primary))",
-  decision: "hsl(var(--accent))",
-  process: "hsl(var(--border))",
-};
+const nodeTypes = { step: StepNode };
 
 interface Props {
   nodes: FlowNode[];
@@ -27,41 +24,53 @@ interface Props {
 const FlowchartViewer = ({ nodes, edges }: Props) => {
   const [selected, setSelected] = useState<FlowNode | null>(null);
 
+  const layout = useMemo(() => computeFlowLayout(nodes, edges), [nodes, edges]);
+
   const rfNodes: Node[] = useMemo(
     () =>
       nodes.map((n) => ({
         id: n.id,
-        position: { x: Number(n.position_x), y: Number(n.position_y) },
-        data: { label: n.title },
-        style: {
-          background: "hsl(var(--card))",
-          color: "hsl(var(--foreground))",
-          border: `1px solid ${typeStyle[n.node_type] ?? "hsl(var(--border))"}`,
-          borderRadius: n.node_type === "decision" ? 16 : 10,
-          padding: 12,
-          fontSize: 13,
-          fontWeight: 500,
-          width: 190,
-          textAlign: "center" as const,
+        type: "step",
+        position: layout.positions[n.id] ?? {
+          x: Number(n.position_x),
+          y: Number(n.position_y),
+        },
+        data: {
+          title: n.title,
+          items: (n as FlowNode & { items?: string[] }).items ?? [],
+          node_type: n.node_type,
         },
       })),
-    [nodes],
+    [nodes, layout],
   );
 
   const rfEdges: Edge[] = useMemo(
     () =>
-      edges.map((e) => ({
-        id: e.id,
-        source: e.source_node_id,
-        target: e.target_node_id,
-        label: e.label ?? undefined,
-        animated: true,
-        style: { stroke: "hsl(var(--primary) / 0.6)" },
-        labelStyle: { fill: "hsl(var(--muted-foreground))", fontSize: 11 },
-        labelBgStyle: { fill: "hsl(var(--background))" },
-        markerEnd: { type: MarkerType.ArrowClosed, color: "hsl(var(--primary))" },
-      })),
-    [edges],
+      edges.map((e) => {
+        const isBack = layout.backEdges.has(
+          `${e.source_node_id}->${e.target_node_id}`,
+        );
+        return {
+          id: e.id,
+          source: e.source_node_id,
+          target: e.target_node_id,
+          label: e.label ?? undefined,
+          type: "smoothstep",
+          animated: !isBack,
+          style: {
+            stroke: isBack ? "hsl(var(--accent) / 0.7)" : "hsl(var(--primary) / 0.6)",
+            strokeDasharray: isBack ? "6 4" : undefined,
+          },
+          labelStyle: { fill: "hsl(var(--foreground))", fontSize: 11 },
+          labelBgStyle: { fill: "hsl(var(--background))" },
+          labelBgPadding: [4, 2] as [number, number],
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isBack ? "hsl(var(--accent))" : "hsl(var(--primary))",
+          },
+        };
+      }),
+    [edges, layout],
   );
 
   const onNodeClick = useCallback(
@@ -83,16 +92,21 @@ const FlowchartViewer = ({ nodes, edges }: Props) => {
 
   return (
     <div className="relative">
-      <div className="h-[65vh] min-h-[420px] rounded-xl overflow-hidden border border-border/40 glass-card">
+      <div className="h-[70vh] min-h-[440px] rounded-xl overflow-hidden border border-border/40 glass-card">
         <ReactFlow
           nodes={rfNodes}
           edges={rfEdges}
+          nodeTypes={nodeTypes}
           onNodeClick={onNodeClick}
+          nodesDraggable={false}
+          nodesConnectable={false}
           fitView
+          minZoom={0.15}
+          fitViewOptions={{ padding: 0.15 }}
           proOptions={{ hideAttribution: true }}
         >
           <Background color="hsl(var(--border))" gap={20} />
-          <Controls className="!bg-card !border-border" />
+          <Controls className="!bg-card !border-border" showInteractive={false} />
           <MiniMap
             pannable
             zoomable
