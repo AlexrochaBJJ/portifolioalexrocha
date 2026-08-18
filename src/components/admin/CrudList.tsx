@@ -30,6 +30,7 @@ export interface FieldDef {
   label: string;
   type?: "text" | "textarea" | "number" | "tags" | "switch" | "select" | "url";
   options?: string[];
+  choices?: { label: string; value: string }[];
   required?: boolean;
   maxLength?: number;
   placeholder?: string;
