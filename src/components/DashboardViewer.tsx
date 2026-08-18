@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, Loader2 } from "lucide-react";
 import { useState } from "react";
-import type { Dashboard } from "@/data/dashboards";
+import type { DashboardRow } from "@/hooks/useContent";
 
 interface DashboardViewerProps {
-  dashboard: Dashboard | null;
+  dashboard: DashboardRow | null;
   onClose: () => void;
 }
 
@@ -21,7 +21,6 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {/* Backdrop */}
           <motion.div
             className="absolute inset-0 bg-background/95 backdrop-blur-sm"
             onClick={onClose}
@@ -30,7 +29,6 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
             exit={{ opacity: 0 }}
           />
 
-          {/* Header */}
           <motion.header
             className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-border/50"
             initial={{ y: -20, opacity: 0 }}
@@ -48,7 +46,7 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
             </div>
             <div className="flex items-center gap-3">
               <a
-                href={dashboard.embedUrl}
+                href={dashboard.embed_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-body"
@@ -66,7 +64,6 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
             </div>
           </motion.header>
 
-          {/* Iframe Container */}
           <motion.div
             className="relative z-10 flex-1 p-4 md:p-6"
             initial={{ y: 20, opacity: 0 }}
@@ -85,12 +82,11 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
               )}
               <iframe
                 title={dashboard.title}
-                src={dashboard.embedUrl}
+                src={dashboard.embed_url}
                 className="w-full h-full"
-                frameBorder="0"
                 allowFullScreen
                 onLoad={() => setIsLoading(false)}
-                style={{ minHeight: "400px" }}
+                style={{ minHeight: "400px", border: 0 }}
               />
             </div>
           </motion.div>
