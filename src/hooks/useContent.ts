@@ -130,12 +130,13 @@ export const useDashboards = (includeUnpublished = false) =>
     },
   });
 
-export const useFlowcharts = (includeUnpublished = false) =>
+export const useFlowcharts = (includeUnpublished = false, experienceId?: string) =>
   useQuery({
-    queryKey: ["flowcharts", includeUnpublished],
+    queryKey: ["flowcharts", includeUnpublished, experienceId ?? "all"],
     queryFn: async () => {
       let query = supabase.from("flowcharts").select("*").order("sort_order");
       if (!includeUnpublished) query = query.eq("is_published", true);
+      if (experienceId) query = query.eq("experience_id", experienceId);
       const { data, error } = await query;
       if (error) throw error;
       return data;
