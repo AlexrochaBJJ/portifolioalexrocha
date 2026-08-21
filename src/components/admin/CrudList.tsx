@@ -170,6 +170,46 @@ const CrudList = ({
         />
       );
     }
+    if (field.type === "multiselect") {
+      const choices =
+        field.choices ?? (field.options ?? []).map((o) => ({ label: o, value: o }));
+      const selected: string[] = Array.isArray(value) ? value : [];
+      if (choices.length === 0) {
+        return (
+          <p className="text-xs text-muted-foreground font-body">
+            Nenhuma opção disponível ainda.
+          </p>
+        );
+      }
+      return (
+        <div className="flex flex-wrap gap-2">
+          {choices.map((opt) => {
+            const active = selected.includes(opt.value);
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    [field.name]: active
+                      ? selected.filter((s) => s !== opt.value)
+                      : [...selected, opt.value],
+                  })
+                }
+                className={`px-3 py-1.5 rounded-full text-xs font-body border transition-colors ${
+                  active
+                    ? "bg-primary/15 text-primary border-primary/40"
+                    : "bg-secondary/50 text-muted-foreground border-border/40 hover:text-foreground"
+                }`}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
     if (field.type === "select") {
       const choices =
         field.choices ?? (field.options ?? []).map((o) => ({ label: o, value: o }));
