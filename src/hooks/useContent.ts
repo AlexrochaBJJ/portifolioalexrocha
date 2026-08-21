@@ -288,3 +288,31 @@ export const useFlowchartDetail = (flowchartId?: string) =>
       return { nodes: nodes ?? [], edges: edges ?? [] };
     },
   });
+
+export const useExperienceDashboardLinks = (experienceId?: string) =>
+  useQuery({
+    queryKey: ["experience_dashboards", experienceId],
+    enabled: !!experienceId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("experience_dashboards")
+        .select("*")
+        .eq("experience_id", experienceId!);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+export const useExperienceWebProjectLinks = (experienceId?: string) =>
+  useQuery({
+    queryKey: ["experience_web_projects", experienceId],
+    enabled: !!experienceId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("experience_web_projects")
+        .select("*")
+        .eq("experience_id", experienceId!);
+      if (error) throw error;
+      return data;
+    },
+  });

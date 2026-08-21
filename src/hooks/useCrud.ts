@@ -11,7 +11,10 @@ type TableName =
   | "dashboards"
   | "flowcharts"
   | "flowchart_nodes"
-  | "flowchart_edges";
+  | "flowchart_edges"
+  | "experience_highlights"
+  | "experience_dashboards"
+  | "experience_web_projects";
 
 export const useCrud = (table: TableName, invalidateKeys: string[]) => {
   const qc = useQueryClient();
