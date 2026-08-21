@@ -320,7 +320,28 @@ const FlowchartViewer = ({
                       </ul>
                     )}
                   </button>
+                  {editable && (
+                    <div className="flex items-center justify-center gap-1 mt-1">
+                      <button
+                        type="button"
+                        onClick={() => onAddAfter?.(node)}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-primary/50 bg-primary/10 text-[10px] font-body text-primary hover:bg-primary/20"
+                      >
+                        <Plus className="w-3 h-3" />
+                        etapa depois
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onDeleteNode?.(node)}
+                        className="inline-flex items-center px-1.5 py-0.5 rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10"
+                        aria-label={`Remover ${node.title}`}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
                 </div>
+
               );
             })}
           </div>
