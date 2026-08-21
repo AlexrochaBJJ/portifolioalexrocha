@@ -28,7 +28,15 @@ import {
 export interface FieldDef {
   name: string;
   label: string;
-  type?: "text" | "textarea" | "number" | "tags" | "switch" | "select" | "url";
+  type?:
+    | "text"
+    | "textarea"
+    | "number"
+    | "tags"
+    | "switch"
+    | "select"
+    | "multiselect"
+    | "url";
   options?: string[];
   choices?: { label: string; value: string }[];
   required?: boolean;
@@ -55,6 +63,7 @@ interface Props {
 const emptyValue = (field: FieldDef) => {
   if (field.type === "switch") return true;
   if (field.type === "number") return 0;
+  if (field.type === "multiselect") return [];
   if (field.type === "tags") return "";
   return "";
 };
@@ -93,7 +102,11 @@ const CrudList = ({
           ? Array.isArray(raw)
             ? raw.join(", ")
             : ""
-          : raw ?? emptyValue(f);
+          : f.type === "multiselect"
+            ? Array.isArray(raw)
+              ? raw
+              : []
+            : raw ?? emptyValue(f);
     });
     setForm(values);
     setEditingId(item.id);
@@ -115,6 +128,8 @@ const CrudList = ({
           .split(",")
           .map((t) => t.trim())
           .filter(Boolean);
+      } else if (field.type === "multiselect") {
+        payload[field.name] = Array.isArray(value) ? value : [];
       } else if (field.type === "number") {
         payload[field.name] = Number(value) || 0;
       } else if (field.type === "switch") {
@@ -153,6 +168,46 @@ const CrudList = ({
           checked={!!value}
           onCheckedChange={(checked) => setForm({ ...form, [field.name]: checked })}
         />
+      );
+    }
+    if (field.type === "multiselect") {
+      const choices =
+        field.choices ?? (field.options ?? []).map((o) => ({ label: o, value: o }));
+      const selected: string[] = Array.isArray(value) ? value : [];
+      if (choices.length === 0) {
+        return (
+          <p className="text-xs text-muted-foreground font-body">
+            Nenhuma opção disponível ainda.
+          </p>
+        );
+      }
+      return (
+        <div className="flex flex-wrap gap-2">
+          {choices.map((opt) => {
+            const active = selected.includes(opt.value);
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    [field.name]: active
+                      ? selected.filter((s) => s !== opt.value)
+                      : [...selected, opt.value],
+                  })
+                }
+                className={`px-3 py-1.5 rounded-full text-xs font-body border transition-colors ${
+                  active
+                    ? "bg-primary/15 text-primary border-primary/40"
+                    : "bg-secondary/50 text-muted-foreground border-border/40 hover:text-foreground"
+                }`}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
       );
     }
     if (field.type === "select") {
@@ -218,7 +273,11 @@ const CrudList = ({
             {fields.map((field) => (
               <div
                 key={field.name}
-                className={`space-y-2 ${field.type === "textarea" ? "md:col-span-2" : ""}`}
+                className={`space-y-2 ${
+                  field.type === "textarea" || field.type === "multiselect"
+                    ? "md:col-span-2"
+                    : ""
+                }`}
               >
                 <Label>{field.label}</Label>
                 {renderField(field)}

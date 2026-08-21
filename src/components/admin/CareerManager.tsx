@@ -1,15 +1,32 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CrudList from "./CrudList";
 import ExperienceEditor from "./ExperienceEditor";
-import { useCareer, type CareerExperience } from "@/hooks/useContent";
+import {
+  useCareer,
+  useDashboards,
+  useWebProjects,
+  type CareerExperience,
+} from "@/hooks/useContent";
 import { useCrud } from "@/hooks/useCrud";
+import { slugify } from "@/lib/slug";
 
 const CareerManager = () => {
   const { data, isLoading } = useCareer(true);
+  const { data: dashboards } = useDashboards(true);
+  const { data: webProjects } = useWebProjects(true);
   const crud = useCrud("career_experiences", ["career", "experience"]);
   const [editing, setEditing] = useState<CareerExperience | null>(null);
+
+  const dashboardCategories = useMemo(
+    () => Array.from(new Set((dashboards ?? []).map((d) => d.category))).sort(),
+    [dashboards],
+  );
+  const webappCategories = useMemo(
+    () => Array.from(new Set((webProjects ?? []).map((p) => p.category))).sort(),
+    [webProjects],
+  );
 
   const current = editing
     ? (data ?? []).find((e) => e.id === editing.id) ?? editing
@@ -29,13 +46,6 @@ const CareerManager = () => {
       fields={[
         { name: "role_title", label: "Cargo", required: true, maxLength: 120 },
         { name: "company", label: "Empresa", required: true, maxLength: 120 },
-        {
-          name: "slug",
-          label: "Slug (URL)",
-          required: true,
-          maxLength: 80,
-          placeholder: "comprador-empresa-x",
-        },
         { name: "period", label: "Período", required: true, placeholder: "2022 — Atual" },
         { name: "location", label: "Local", maxLength: 120 },
         { name: "sector", label: "Setor / área", maxLength: 120 },
@@ -51,10 +61,9 @@ const CareerManager = () => {
           type: "textarea",
           maxLength: 400,
         },
-        { name: "description", label: "Descrição", type: "textarea", maxLength: 2000 },
         {
-          name: "long_description",
-          label: "Descrição detalhada",
+          name: "description",
+          label: "Descrição",
           type: "textarea",
           maxLength: 8000,
         },
@@ -74,16 +83,45 @@ const CareerManager = () => {
           type: "tags",
         },
         {
-          name: "highlights",
-          label: "Destaques (separados por vírgula)",
-          type: "tags",
+          name: "dashboard_categories",
+          label: "Categorias de dashboards exibidas nesta experiência",
+          type: "multiselect",
+          options: dashboardCategories,
+        },
+        {
+          name: "webapp_categories",
+          label: "Categorias de aplicações web exibidas nesta experiência",
+          type: "multiselect",
+          options: webappCategories,
         },
         { name: "logo_url", label: "Logo da empresa (URL)", maxLength: 500 },
+        {
+          name: "slug",
+          label: "Endereço da página (opcional — gerado automaticamente)",
+          maxLength: 80,
+          placeholder: "comprador-empresa-x",
+        },
         { name: "sort_order", label: "Ordem", type: "number" },
         { name: "is_published", label: "Publicado", type: "switch" },
       ]}
-      onCreate={crud.insert}
-      onUpdate={crud.update}
+      onCreate={(values) =>
+        crud.insert({
+          ...values,
+          slug:
+            values.slug ||
+            slugify(`${values.role_title ?? ""} ${values.company ?? ""}`) ||
+            `experiencia-${Date.now()}`,
+        })
+      }
+      onUpdate={(id, values) =>
+        crud.update(id, {
+          ...values,
+          slug:
+            values.slug ||
+            slugify(`${values.role_title ?? ""} ${values.company ?? ""}`) ||
+            id,
+        })
+      }
       onDelete={crud.remove}
       extraActions={(item) => (
         <Button

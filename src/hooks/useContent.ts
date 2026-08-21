@@ -11,6 +11,13 @@ export type DashboardRow = Tables<"dashboards">;
 export type Flowchart = Tables<"flowcharts">;
 export type FlowNode = Tables<"flowchart_nodes">;
 export type FlowEdge = Tables<"flowchart_edges">;
+export type ExperienceHighlight = Tables<"experience_highlights">;
+
+const uniqueById = <T extends { id: string }>(rows: T[]) => {
+  const map = new Map<string, T>();
+  rows.forEach((row) => map.set(row.id, row));
+  return Array.from(map.values());
+};
 
 export const useAbout = () =>
   useQuery({
@@ -65,15 +72,103 @@ export const useExperienceBySlug = (slug?: string) =>
       if (error) throw error;
       if (!experience) return null;
 
-      const { data: charts } = await supabase
-        .from("flowcharts")
-        .select("*")
-        .eq("experience_id", experience.id)
-        .eq("is_published", true)
-        .order("sort_order");
+      const [{ data: charts }, { data: highlights }, { data: dashLinks }, { data: appLinks }] =
+        await Promise.all([
+          supabase
+            .from("flowcharts")
+            .select("*")
+            .eq("experience_id", experience.id)
+            .eq("is_published", true)
+            .order("sort_order"),
+          supabase
+            .from("experience_highlights")
+            .select("*")
+            .eq("experience_id", experience.id)
+            .order("sort_order"),
+          supabase
+            .from("experience_dashboards")
+            .select("dashboard_id")
+            .eq("experience_id", experience.id),
+          supabase
+            .from("experience_web_projects")
+            .select("web_project_id")
+            .eq("experience_id", experience.id),
+        ]);
+
+      const dashboardIds = (dashLinks ?? []).map((l) => l.dashboard_id);
+      const appIds = (appLinks ?? []).map((l) => l.web_project_id);
+      const dashCategories = experience.dashboard_categories ?? [];
+      const appCategories = experience.webapp_categories ?? [];
+
+      const dashboardQueries: PromiseLike<DashboardRow[]>[] = [];
+      if (dashCategories.length > 0) {
+        dashboardQueries.push(
+          supabase
+            .from("dashboards")
+            .select("*")
+            .eq("is_published", true)
+            .in("category", dashCategories)
+            .order("sort_order")
+            .then(({ data }) => data ?? []),
+        );
+      }
+      if (dashboardIds.length > 0) {
+        dashboardQueries.push(
+          supabase
+            .from("dashboards")
+            .select("*")
+            .eq("is_published", true)
+            .in("id", dashboardIds)
+            .order("sort_order")
+            .then(({ data }) => data ?? []),
+        );
+      }
+
+      const appQueries: PromiseLike<WebProject[]>[] = [];
+      if (appCategories.length > 0) {
+        appQueries.push(
+          supabase
+            .from("web_projects")
+            .select("*")
+            .eq("is_published", true)
+            .in("category", appCategories)
+            .order("sort_order")
+            .then(({ data }) => data ?? []),
+        );
+      }
+      if (appIds.length > 0) {
+        appQueries.push(
+          supabase
+            .from("web_projects")
+            .select("*")
+            .eq("is_published", true)
+            .in("id", appIds)
+            .order("sort_order")
+            .then(({ data }) => data ?? []),
+        );
+      }
+
+      const [dashboardResults, appResults] = await Promise.all([
+        Promise.all(dashboardQueries),
+        Promise.all(appQueries),
+      ]);
+
+      const dashboards = uniqueById(dashboardResults.flat()).sort(
+        (a, b) => a.sort_order - b.sort_order,
+      );
+      const webProjects = uniqueById(appResults.flat()).sort(
+        (a, b) => a.sort_order - b.sort_order,
+      );
 
       const ids = (charts ?? []).map((c) => c.id);
-      if (ids.length === 0) return { experience, charts: [], nodes: [], edges: [] };
+      const base = {
+        experience,
+        charts: charts ?? [],
+        highlights: highlights ?? [],
+        dashboards,
+        webProjects,
+      };
+      if (ids.length === 0) return { ...base, nodes: [], edges: [] };
 
       const [{ data: nodes }, { data: edges }] = await Promise.all([
         supabase
@@ -84,12 +179,22 @@ export const useExperienceBySlug = (slug?: string) =>
         supabase.from("flowchart_edges").select("*").in("flowchart_id", ids),
       ]);
 
-      return {
-        experience,
-        charts: charts ?? [],
-        nodes: nodes ?? [],
-        edges: edges ?? [],
-      };
+      return { ...base, nodes: nodes ?? [], edges: edges ?? [] };
+    },
+  });
+
+export const useExperienceHighlights = (experienceId?: string) =>
+  useQuery({
+    queryKey: ["experience_highlights", experienceId],
+    enabled: !!experienceId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("experience_highlights")
+        .select("*")
+        .eq("experience_id", experienceId!)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
     },
   });
 
@@ -181,5 +286,33 @@ export const useFlowchartDetail = (flowchartId?: string) =>
         supabase.from("flowchart_edges").select("*").eq("flowchart_id", flowchartId!),
       ]);
       return { nodes: nodes ?? [], edges: edges ?? [] };
+    },
+  });
+
+export const useExperienceDashboardLinks = (experienceId?: string) =>
+  useQuery({
+    queryKey: ["experience_dashboards", experienceId],
+    enabled: !!experienceId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("experience_dashboards")
+        .select("*")
+        .eq("experience_id", experienceId!);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+export const useExperienceWebProjectLinks = (experienceId?: string) =>
+  useQuery({
+    queryKey: ["experience_web_projects", experienceId],
+    enabled: !!experienceId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("experience_web_projects")
+        .select("*")
+        .eq("experience_id", experienceId!);
+      if (error) throw error;
+      return data;
     },
   });

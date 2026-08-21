@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import LovableProjectCard from "./LovableProjectCard";
@@ -6,6 +7,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const LovableProjectsGallery = () => {
   const { data: projects, isLoading } = useWebProjects();
+  const [activeCategory, setActiveCategory] = useState("Todos");
+
+  const categories = useMemo(
+    () => ["Todos", ...Array.from(new Set((projects ?? []).map((p) => p.category)))],
+    [projects],
+  );
+
+  const filtered =
+    activeCategory === "Todos"
+      ? projects ?? []
+      : (projects ?? []).filter((p) => p.category === activeCategory);
+
 
   return (
     <section id="lovable-projects" className="py-20 px-6">
@@ -33,12 +46,30 @@ const LovableProjectsGallery = () => {
           <div className="line-gradient max-w-xs mx-auto mt-8" />
         </motion.div>
 
+        {categories.length > 2 && (
+          <div className="flex flex-wrap justify-center gap-2 mb-12">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2 rounded-full text-sm font-medium font-body transition-all duration-300 ${
+                  activeCategory === cat
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "glass-card text-muted-foreground hover:text-foreground hover:border-primary/30"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading
             ? Array.from({ length: 3 }).map((_, i) => (
                 <Skeleton key={i} className="aspect-[16/12] rounded-xl" />
               ))
-            : (projects ?? []).map((project, index) => (
+            : filtered.map((project, index) => (
                 <LovableProjectCard key={project.id} project={project} index={index} />
               ))}
         </div>
