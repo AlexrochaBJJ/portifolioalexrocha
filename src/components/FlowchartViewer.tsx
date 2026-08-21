@@ -17,7 +17,13 @@ import { computeFlowLayout, NODE_LAYOUT_WIDTH } from "@/lib/flowLayout";
 interface Props {
   nodes: FlowNode[];
   edges: FlowEdge[];
+  /** modo de edição: clicar na etapa abre o formulário */
+  editable?: boolean;
+  onEditNode?: (node: FlowNode) => void;
+  onAddAfter?: (node: FlowNode) => void;
+  onDeleteNode?: (node: FlowNode) => void;
 }
+
 
 const typeLabel: Record<string, string> = {
   start: "Início",
