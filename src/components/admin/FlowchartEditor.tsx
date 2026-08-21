@@ -1,9 +1,9 @@
 import { ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
 import FlowchartStepList from "./FlowchartStepList";
-import FlowchartViewer from "@/components/FlowchartViewer";
-import { useFlowchartDetail, type Flowchart } from "@/hooks/useContent";
+import FlowchartDiagramEditor from "./FlowchartDiagramEditor";
+import { type Flowchart } from "@/hooks/useContent";
+
 
 interface Props {
   chart: Flowchart;
