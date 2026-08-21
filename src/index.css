@@ -51,7 +51,17 @@
     --glass: 220 18% 12%;
     --glass-border: 220 15% 20%;
     --surface-hover: 220 15% 14%;
+
+    /* Flowchart palette (clara, sobre fundo dark amber) */
+    --flow-canvas: 220 16% 11%;
+    --flow-start: 205 75% 60%;
+    --flow-process: 155 45% 55%;
+    --flow-decision: 40 80% 58%;
+    --flow-branch: 265 45% 68%;
+    --flow-end: 205 75% 60%;
+    --flow-line: 220 12% 45%;
   }
+
 }
 
 @layer base {
