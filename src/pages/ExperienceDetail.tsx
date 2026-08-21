@@ -10,17 +10,25 @@ import {
   Target,
   ListChecks,
   Wrench,
+  Sparkles,
+  TrendingUp,
+  BarChart3,
+  AppWindow,
 } from "lucide-react";
 import SiteLayout from "@/components/SiteLayout";
 import FlowchartViewer from "@/components/FlowchartViewer";
+import DashboardCard from "@/components/DashboardCard";
+import DashboardViewer from "@/components/DashboardViewer";
+import LovableProjectCard from "@/components/LovableProjectCard";
 import FlowchartDetail from "./FlowchartDetail";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useExperienceBySlug } from "@/hooks/useContent";
+import { useExperienceBySlug, type DashboardRow } from "@/hooks/useContent";
 
 const ExperienceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data, isLoading } = useExperienceBySlug(slug);
   const [activeChart, setActiveChart] = useState<string | null>(null);
+  const [openDashboard, setOpenDashboard] = useState<DashboardRow | null>(null);
 
   if (isLoading) {
     return (
@@ -40,6 +48,9 @@ const ExperienceDetail = () => {
 
   const exp = data.experience;
   const charts = data.charts;
+  const highlights = data.highlights;
+  const dashboards = data.dashboards;
+  const webProjects = data.webProjects;
   const currentId = activeChart ?? charts[0]?.id ?? null;
   const current = charts.find((c) => c.id === currentId) ?? null;
   const nodes = data.nodes.filter((n) => n.flowchart_id === currentId);
@@ -83,10 +94,10 @@ const ExperienceDetail = () => {
             </div>
           </header>
 
-          {(exp.long_description || exp.description) && (
+          {(exp.description || exp.long_description) && (
             <div className="glass-card rounded-xl p-6 mb-8">
               <p className="text-sm text-muted-foreground font-body leading-relaxed whitespace-pre-line">
-                {exp.long_description || exp.description}
+                {exp.description || exp.long_description}
               </p>
             </div>
           )}
@@ -133,7 +144,33 @@ const ExperienceDetail = () => {
             )}
           </div>
 
-          {(exp.tools.length > 0 || exp.highlights.length > 0) && (
+          {highlights.length > 0 && (
+            <div className="mb-12">
+              <h2 className="inline-flex items-center gap-2 text-2xl font-bold font-heading mb-5">
+                <Sparkles className="w-5 h-5 text-primary" />
+                Destaques e impacto
+              </h2>
+              <div className="grid gap-4 md:grid-cols-2">
+                {highlights.map((item) => (
+                  <div key={item.id} className="glass-card rounded-xl p-5">
+                    <p className="text-sm text-foreground font-body leading-relaxed whitespace-pre-line">
+                      {item.highlight}
+                    </p>
+                    {item.impact && (
+                      <div className="mt-4 pt-4 border-t border-border/40 flex gap-2">
+                        <TrendingUp className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                        <p className="text-sm text-muted-foreground font-body leading-relaxed whitespace-pre-line">
+                          {item.impact}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {exp.tools.length > 0 && (
             <div className="mb-12 space-y-4">
               {exp.tools.length > 0 && (
                 <div>
@@ -151,18 +188,6 @@ const ExperienceDetail = () => {
                       </span>
                     ))}
                   </div>
-                </div>
-              )}
-              {exp.highlights.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {exp.highlights.map((h) => (
-                    <span
-                      key={h}
-                      className="px-2.5 py-1 text-xs rounded-md bg-primary/10 text-primary border border-primary/20 font-body"
-                    >
-                      {h}
-                    </span>
-                  ))}
                 </div>
               )}
             </div>
@@ -209,8 +234,45 @@ const ExperienceDetail = () => {
               )}
             </div>
           )}
+
+          {dashboards.length > 0 && (
+            <div className="mt-14">
+              <h2 className="inline-flex items-center gap-2 text-2xl font-bold font-heading mb-5">
+                <BarChart3 className="w-5 h-5 text-primary" />
+                Dashboards deste trabalho
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {dashboards.map((dashboard, index) => (
+                  <DashboardCard
+                    key={dashboard.id}
+                    dashboard={dashboard}
+                    index={index}
+                    onOpen={setOpenDashboard}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {webProjects.length > 0 && (
+            <div className="mt-14">
+              <h2 className="inline-flex items-center gap-2 text-2xl font-bold font-heading mb-5">
+                <AppWindow className="w-5 h-5 text-primary" />
+                Aplicações web deste trabalho
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {webProjects.map((project, index) => (
+                  <LovableProjectCard key={project.id} project={project} index={index} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
+      <DashboardViewer
+        dashboard={openDashboard}
+        onClose={() => setOpenDashboard(null)}
+      />
     </SiteLayout>
   );
 };
