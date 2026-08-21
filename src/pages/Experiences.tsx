@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -11,8 +12,33 @@ import SiteLayout from "@/components/SiteLayout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCareer } from "@/hooks/useContent";
 
+const CURRENT = /atual|presente|hoje|momento/i;
+
+/** Ano final da experiência (ou "Atual") a partir do texto do período. */
+const endLabel = (period: string) => {
+  if (CURRENT.test(period)) return "Atual";
+  const years = period.match(/\d{4}/g);
+  return years?.[years.length - 1] ?? period.trim();
+};
+
+const endValue = (period: string) => {
+  if (CURRENT.test(period)) return 9999;
+  const years = period.match(/\d{4}/g);
+  return years ? Number(years[years.length - 1]) : 0;
+};
+
 const Experiences = () => {
   const { data: career, isLoading } = useCareer();
+
+  const timeline = useMemo(
+    () =>
+      [...(career ?? [])].sort((a, b) => {
+        const diff = endValue(b.period) - endValue(a.period);
+        return diff !== 0 ? diff : a.sort_order - b.sort_order;
+      }),
+    [career],
+  );
+
 
   return (
     <SiteLayout>
