@@ -349,7 +349,9 @@ const FlowchartStepList = ({ flowchartId }: Props) => {
                 <LabelWithCount label="Itens (um por linha)" value={draft.items} max={2000} />
                 <Textarea
                   rows={4}
+                  maxLength={2000}
                   value={draft.items}
+
                   placeholder={"Preço\nFrete\nPrazo\nPagamento"}
                   onChange={(e) => setDraft({ ...draft, items: e.target.value })}
                 />
