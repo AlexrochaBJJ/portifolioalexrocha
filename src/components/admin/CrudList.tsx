@@ -279,31 +279,26 @@ const CrudList = ({
                     : ""
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
-                  <Label>{field.label}</Label>
-                  {(() => {
-                    const counted =
-                      field.type === undefined ||
-                      field.type === "text" ||
-                      field.type === "url" ||
-                      field.type === "textarea" ||
-                      field.type === "tags";
-                    if (!counted) return null;
-                    const limit =
-                      field.maxLength ?? (field.type === "textarea" ? 2000 : 500);
-                    const used = String(form[field.name] ?? "").length;
-                    return (
-                      <span
-                        className={`text-xs font-body tabular-nums ${
-                          used >= limit ? "text-destructive" : "text-muted-foreground"
-                        }`}
-                      >
-                        {used}/{limit}
-                      </span>
-                    );
-                  })()}
-                </div>
+                {(() => {
+                  const counted =
+                    field.type === undefined ||
+                    field.type === "text" ||
+                    field.type === "url" ||
+                    field.type === "textarea" ||
+                    field.type === "tags";
+                  if (!counted) return <Label>{field.label}</Label>;
+                  const limit =
+                    field.maxLength ?? (field.type === "textarea" ? 2000 : 500);
+                  return (
+                    <LabelWithCount
+                      label={field.label}
+                      value={String(form[field.name] ?? "")}
+                      max={limit}
+                    />
+                  );
+                })()}
                 {renderField(field)}
+
 
               </div>
             ))}
