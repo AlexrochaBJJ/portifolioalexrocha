@@ -11,6 +11,7 @@ import WebApps from "./pages/WebApps";
 import Experiences from "./pages/Experiences";
 import ExperienceDetail from "./pages/ExperienceDetail";
 import FlowchartDetail from "./pages/FlowchartDetail";
+import Assistant from "./pages/Assistant";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/experiencias" element={<Experiences />} />
             <Route path="/experiencias/:slug" element={<ExperienceDetail />} />
             <Route path="/fluxogramas/:slug" element={<FlowchartDetail />} />
+            <Route path="/assistente" element={<Assistant />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
