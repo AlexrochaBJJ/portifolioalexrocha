@@ -11,7 +11,7 @@ interface Props {
 }
 
 const FlowchartEditor = ({ chart, onBack }: Props) => {
-  const { data, isLoading } = useFlowchartDetail(chart.id);
+
 
   return (
     <div className="space-y-4">
