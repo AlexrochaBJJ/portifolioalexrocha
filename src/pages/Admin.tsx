@@ -59,8 +59,12 @@ const Admin = () => {
             </Button>
           </div>
 
-          <Tabs defaultValue="about">
+          <Tabs
+            value={searchParams.get("tab") ?? "about"}
+            onValueChange={(value) => setSearchParams({ tab: value }, { replace: true })}
+          >
             <TabsList className="flex flex-wrap h-auto justify-start">
+
               <TabsTrigger value="about">Sobre mim</TabsTrigger>
               <TabsTrigger value="skills">Habilidades</TabsTrigger>
               <TabsTrigger value="career">Trajetória</TabsTrigger>
