@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LogOut, ShieldCheck } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,9 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Admin = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { session, isAdmin, loading, signOut } = useAuth();
+
 
   useEffect(() => {
     if (!loading && (!session || !isAdmin)) navigate("/admin/login", { replace: true });
@@ -59,8 +61,12 @@ const Admin = () => {
             </Button>
           </div>
 
-          <Tabs defaultValue="about">
+          <Tabs
+            value={searchParams.get("tab") ?? "about"}
+            onValueChange={(value) => setSearchParams({ tab: value }, { replace: true })}
+          >
             <TabsList className="flex flex-wrap h-auto justify-start">
+
               <TabsTrigger value="about">Sobre mim</TabsTrigger>
               <TabsTrigger value="skills">Habilidades</TabsTrigger>
               <TabsTrigger value="career">Trajetória</TabsTrigger>

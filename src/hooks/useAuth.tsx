@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,9 +22,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const checkedUserId = useRef<string | null>(null);
 
   useEffect(() => {
     const checkRole = async (userId: string) => {
+      // Avoid re-checking (and flipping loading) on token refresh events
+      if (checkedUserId.current === userId) {
+        setLoading(false);
+        return;
+      }
+      checkedUserId.current = userId;
       const { data } = await supabase
         .from("user_roles")
         .select("role")
@@ -38,9 +45,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       if (newSession?.user) {
-        setLoading(true);
-        setTimeout(() => checkRole(newSession.user.id), 0);
+        if (checkedUserId.current !== newSession.user.id) {
+          setLoading(true);
+          setTimeout(() => checkRole(newSession.user.id), 0);
+        }
       } else {
+        checkedUserId.current = null;
         setIsAdmin(false);
         setLoading(false);
       }
@@ -57,6 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => sub.subscription.unsubscribe();
   }, []);
+
 
   const signOut = async () => {
     await supabase.auth.signOut();
