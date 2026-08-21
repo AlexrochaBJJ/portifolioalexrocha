@@ -11,7 +11,10 @@ import {
 const inlineRuns = (text: string, opts: { bold?: boolean; size?: number; color?: string } = {}) => {
   const { bold = false, size = 22, color } = opts;
   const runs: TextRun[] = [];
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  // Links markdown viram "texto (url)" para não deixar sintaxe crua no Word
+  const plain = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label, url) => `${label} (${url})`);
+  const parts = plain.split(/(\*\*[^*]+\*\*)/g);
+
   parts.forEach((part) => {
     if (!part) return;
     const isBold = part.startsWith("**") && part.endsWith("**");
