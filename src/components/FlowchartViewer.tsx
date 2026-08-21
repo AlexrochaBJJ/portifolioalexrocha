@@ -280,9 +280,11 @@ const FlowchartViewer = ({
                 >
                   <button
                     type="button"
-                    onClick={() =>
-                      setSelected((cur) => (cur?.id === node.id ? null : node))
-                    }
+                    onClick={() => {
+                      if (editable) onEditNode?.(node);
+                      else setSelected((cur) => (cur?.id === node.id ? null : node));
+                    }}
+
                     className={`w-full text-left border p-3 transition-shadow ${cfg.radius} ${
                       cfg.dashed ? "border-dashed" : ""
                     } ${active ? "shadow-lg" : ""}`}
