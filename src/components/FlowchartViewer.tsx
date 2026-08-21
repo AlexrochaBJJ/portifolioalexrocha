@@ -10,14 +10,23 @@ import {
   GitBranch,
   CornerUpLeft,
   ListOrdered,
+  Plus,
+  Trash2,
 } from "lucide-react";
+
 import type { FlowNode, FlowEdge } from "@/hooks/useContent";
 import { computeFlowLayout, NODE_LAYOUT_WIDTH } from "@/lib/flowLayout";
 
 interface Props {
   nodes: FlowNode[];
   edges: FlowEdge[];
+  /** modo de edição: clicar na etapa abre o formulário */
+  editable?: boolean;
+  onEditNode?: (node: FlowNode) => void;
+  onAddAfter?: (node: FlowNode) => void;
+  onDeleteNode?: (node: FlowNode) => void;
 }
+
 
 const typeLabel: Record<string, string> = {
   start: "Início",
@@ -46,7 +55,15 @@ const palette: Record<string, { token: string; radius: string; dashed?: boolean 
 const V_GAP = 64;
 const NODE_W = NODE_LAYOUT_WIDTH;
 
-const FlowchartViewer = ({ nodes, edges }: Props) => {
+const FlowchartViewer = ({
+  nodes,
+  edges,
+  editable = false,
+  onEditNode,
+  onAddAfter,
+  onDeleteNode,
+}: Props) => {
+
   const [selected, setSelected] = useState<FlowNode | null>(null);
   const [heights, setHeights] = useState<Record<string, number>>({});
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -266,9 +283,11 @@ const FlowchartViewer = ({ nodes, edges }: Props) => {
                 >
                   <button
                     type="button"
-                    onClick={() =>
-                      setSelected((cur) => (cur?.id === node.id ? null : node))
-                    }
+                    onClick={() => {
+                      if (editable) onEditNode?.(node);
+                      else setSelected((cur) => (cur?.id === node.id ? null : node));
+                    }}
+
                     className={`w-full text-left border p-3 transition-shadow ${cfg.radius} ${
                       cfg.dashed ? "border-dashed" : ""
                     } ${active ? "shadow-lg" : ""}`}
@@ -304,7 +323,28 @@ const FlowchartViewer = ({ nodes, edges }: Props) => {
                       </ul>
                     )}
                   </button>
+                  {editable && (
+                    <div className="flex items-center justify-center gap-1 mt-1">
+                      <button
+                        type="button"
+                        onClick={() => onAddAfter?.(node)}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-primary/50 bg-primary/10 text-[10px] font-body text-primary hover:bg-primary/20"
+                      >
+                        <Plus className="w-3 h-3" />
+                        etapa depois
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onDeleteNode?.(node)}
+                        className="inline-flex items-center px-1.5 py-0.5 rounded-md border border-destructive/40 text-destructive hover:bg-destructive/10"
+                        aria-label={`Remover ${node.title}`}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
                 </div>
+
               );
             })}
           </div>
