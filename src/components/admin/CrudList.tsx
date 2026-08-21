@@ -273,7 +273,11 @@ const CrudList = ({
             {fields.map((field) => (
               <div
                 key={field.name}
-                className={`space-y-2 ${field.type === "textarea" ? "md:col-span-2" : ""}`}
+                className={`space-y-2 ${
+                  field.type === "textarea" || field.type === "multiselect"
+                    ? "md:col-span-2"
+                    : ""
+                }`}
               >
                 <Label>{field.label}</Label>
                 {renderField(field)}
