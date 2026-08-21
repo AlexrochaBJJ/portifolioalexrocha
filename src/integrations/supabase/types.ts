@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           company: string
           created_at: string
+          dashboard_categories: string[]
           description: string
           employment_type: string | null
           highlights: string[]
@@ -36,10 +37,12 @@ export type Database = {
           sort_order: number
           tools: string[]
           updated_at: string
+          webapp_categories: string[]
         }
         Insert: {
           company: string
           created_at?: string
+          dashboard_categories?: string[]
           description?: string
           employment_type?: string | null
           highlights?: string[]
@@ -58,10 +61,12 @@ export type Database = {
           sort_order?: number
           tools?: string[]
           updated_at?: string
+          webapp_categories?: string[]
         }
         Update: {
           company?: string
           created_at?: string
+          dashboard_categories?: string[]
           description?: string
           employment_type?: string | null
           highlights?: string[]
@@ -80,6 +85,7 @@ export type Database = {
           sort_order?: number
           tools?: string[]
           updated_at?: string
+          webapp_categories?: string[]
         }
         Relationships: []
       }
@@ -151,6 +157,122 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      experience_dashboards: {
+        Row: {
+          created_at: string
+          dashboard_id: string
+          experience_id: string
+          id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          dashboard_id: string
+          experience_id: string
+          id?: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          dashboard_id?: string
+          experience_id?: string
+          id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_dashboards_dashboard_id_fkey"
+            columns: ["dashboard_id"]
+            isOneToOne: false
+            referencedRelation: "dashboards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_dashboards_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "career_experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_highlights: {
+        Row: {
+          created_at: string
+          experience_id: string
+          highlight: string
+          id: string
+          impact: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          experience_id: string
+          highlight: string
+          id?: string
+          impact?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          experience_id?: string
+          highlight?: string
+          id?: string
+          impact?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_highlights_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "career_experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_web_projects: {
+        Row: {
+          created_at: string
+          experience_id: string
+          id: string
+          sort_order: number
+          web_project_id: string
+        }
+        Insert: {
+          created_at?: string
+          experience_id: string
+          id?: string
+          sort_order?: number
+          web_project_id: string
+        }
+        Update: {
+          created_at?: string
+          experience_id?: string
+          id?: string
+          sort_order?: number
+          web_project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_web_projects_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "career_experiences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_web_projects_web_project_id_fkey"
+            columns: ["web_project_id"]
+            isOneToOne: false
+            referencedRelation: "web_projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       flowchart_edges: {
         Row: {
@@ -396,6 +518,7 @@ export type Database = {
       }
       web_projects: {
         Row: {
+          category: string
           created_at: string
           description: string
           id: string
@@ -408,6 +531,7 @@ export type Database = {
           url: string
         }
         Insert: {
+          category?: string
           created_at?: string
           description?: string
           id?: string
@@ -420,6 +544,7 @@ export type Database = {
           url: string
         }
         Update: {
+          category?: string
           created_at?: string
           description?: string
           id?: string
