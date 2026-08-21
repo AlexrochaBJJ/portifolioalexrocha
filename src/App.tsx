@@ -44,6 +44,7 @@ const App = () => (
             <Route path="/experiencias" element={<Experiences />} />
             <Route path="/experiencias/:slug" element={<ExperienceDetail />} />
             <Route path="/fluxogramas/:slug" element={<FlowchartDetail />} />
+            <Route path="/assistente" element={<Assistant />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
