@@ -102,7 +102,11 @@ const CrudList = ({
           ? Array.isArray(raw)
             ? raw.join(", ")
             : ""
-          : raw ?? emptyValue(f);
+          : f.type === "multiselect"
+            ? Array.isArray(raw)
+              ? raw
+              : []
+            : raw ?? emptyValue(f);
     });
     setForm(values);
     setEditingId(item.id);
