@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LogOut, ShieldCheck } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,9 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Admin = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { session, isAdmin, loading, signOut } = useAuth();
+
 
   useEffect(() => {
     if (!loading && (!session || !isAdmin)) navigate("/admin/login", { replace: true });
