@@ -1,18 +1,18 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   X,
   User,
   Monitor,
   StickyNote,
-  ArrowDown,
   Play,
   Flag,
   Diamond,
   GitBranch,
   CornerUpLeft,
+  ListOrdered,
 } from "lucide-react";
 import type { FlowNode, FlowEdge } from "@/hooks/useContent";
-import { computeFlowLayout } from "@/lib/flowLayout";
+import { computeFlowLayout, NODE_LAYOUT_WIDTH } from "@/lib/flowLayout";
 
 interface Props {
   nodes: FlowNode[];
@@ -32,46 +32,131 @@ const typeIcon: Record<string, typeof Play> = {
   end: Flag,
   decision: Diamond,
   branch: GitBranch,
+  process: ListOrdered,
 };
 
-const shell = (type: string) => {
-  if (type === "start" || type === "end")
-    return "border-primary/70 bg-primary/10 rounded-3xl";
-  if (type === "decision") return "border-accent/70 bg-accent/10 rounded-2xl";
-  if (type === "branch") return "border-primary/40 bg-card/70 rounded-2xl border-dashed";
-  return "border-border/70 bg-card/70 rounded-2xl";
+const palette: Record<string, { token: string; radius: string; dashed?: boolean }> = {
+  start: { token: "--flow-start", radius: "rounded-full" },
+  end: { token: "--flow-end", radius: "rounded-full" },
+  decision: { token: "--flow-decision", radius: "rounded-xl" },
+  branch: { token: "--flow-branch", radius: "rounded-xl", dashed: true },
+  process: { token: "--flow-process", radius: "rounded-xl" },
 };
+
+const V_GAP = 64;
+const NODE_W = NODE_LAYOUT_WIDTH;
 
 const FlowchartViewer = ({ nodes, edges }: Props) => {
   const [selected, setSelected] = useState<FlowNode | null>(null);
+  const [heights, setHeights] = useState<Record<string, number>>({});
+  const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const layout = useMemo(() => computeFlowLayout(nodes, edges), [nodes, edges]);
 
-  const levels = useMemo(() => {
-    const groups = new Map<number, FlowNode[]>();
+  // rank (level index) per node, from layout y ordering
+  const { rankOf, levels } = useMemo(() => {
+    const groups = new Map<number, string[]>();
     nodes.forEach((n) => {
       const y = layout.positions[n.id]?.y ?? 0;
       if (!groups.has(y)) groups.set(y, []);
-      groups.get(y)!.push(n);
+      groups.get(y)!.push(n.id);
     });
-    return [...groups.entries()]
-      .sort((a, b) => a[0] - b[0])
-      .map(([, list]) =>
-        [...list].sort(
-          (a, b) =>
-            (layout.positions[a.id]?.x ?? 0) - (layout.positions[b.id]?.x ?? 0),
-        ),
-      );
+    const sorted = [...groups.entries()].sort((a, b) => a[0] - b[0]).map(([, ids]) => ids);
+    const map: Record<string, number> = {};
+    sorted.forEach((ids, i) => ids.forEach((id) => (map[id] = i)));
+    return { rankOf: map, levels: sorted };
   }, [nodes, layout]);
 
-  const incomingOf = (id: string) =>
-    edges
-      .filter((e) => e.target_node_id === id)
-      .map((e) => ({
+  const measure = useCallback(() => {
+    const next: Record<string, number> = {};
+    Object.entries(nodeRefs.current).forEach(([id, el]) => {
+      if (el) next[id] = el.offsetHeight;
+    });
+    setHeights((prev) => {
+      const changed =
+        Object.keys(next).length !== Object.keys(prev).length ||
+        Object.entries(next).some(([id, h]) => Math.abs((prev[id] ?? 0) - h) > 1);
+      return changed ? next : prev;
+    });
+  }, []);
+
+  useLayoutEffect(measure, [measure, nodes, edges]);
+  useEffect(() => {
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [measure]);
+
+  // geometry: x from layout (normalized), y stacked using measured heights
+  const geometry = useMemo(() => {
+    const xs = nodes.map((n) => layout.positions[n.id]?.x ?? 0);
+    const minX = xs.length ? Math.min(...xs) : 0;
+    const boxes: Record<string, { x: number; y: number; w: number; h: number }> = {};
+    let y = 8;
+    levels.forEach((ids) => {
+      const levelHeight = Math.max(
+        ...ids.map((id) => heights[id] ?? layout.sizes[id]?.height ?? 72),
+      );
+      ids.forEach((id) => {
+        boxes[id] = {
+          x: (layout.positions[id]?.x ?? 0) - minX + 8,
+          y,
+          w: NODE_W,
+          h: heights[id] ?? layout.sizes[id]?.height ?? 72,
+        };
+      });
+      y += levelHeight + V_GAP;
+    });
+    const width = Math.max(
+      ...Object.values(boxes).map((b) => b.x + b.w),
+      NODE_W + 16,
+    ) + 8;
+    const height = Math.max(y - V_GAP + 16, 120);
+    return { boxes, width, height };
+  }, [nodes, levels, layout, heights]);
+
+  const paths = useMemo(() => {
+    const out: {
+      key: string;
+      d: string;
+      label?: string | null;
+      lx?: number;
+      ly?: number;
+      back: boolean;
+    }[] = [];
+    edges.forEach((e) => {
+      const a = geometry.boxes[e.source_node_id];
+      const b = geometry.boxes[e.target_node_id];
+      if (!a || !b) return;
+      const key = `${e.source_node_id}->${e.target_node_id}`;
+      const back = layout.backEdges.has(key);
+      const sx = a.x + a.w / 2;
+      const sy = a.y + a.h;
+      const tx = b.x + b.w / 2;
+      const ty = b.y;
+
+      if (back) {
+        const side = Math.max(a.x + a.w, b.x + b.w) + 34;
+        const d = `M ${a.x + a.w} ${a.y + a.h / 2} H ${side} V ${b.y + b.h / 2} H ${b.x + b.w}`;
+        out.push({ key, d, label: e.label, lx: side + 4, ly: (a.y + b.y) / 2, back });
+        return;
+      }
+
+      const mid = sy + Math.max((ty - sy) / 2, 16);
+      const d =
+        Math.abs(sx - tx) < 2
+          ? `M ${sx} ${sy} V ${ty}`
+          : `M ${sx} ${sy} V ${mid} H ${tx} V ${ty}`;
+      out.push({
+        key,
+        d,
         label: e.label,
-        source: nodes.find((n) => n.id === e.source_node_id),
-        isBack: layout.backEdges.has(`${e.source_node_id}->${e.target_node_id}`),
-      }));
+        lx: Math.abs(sx - tx) < 2 ? sx + 6 : (sx + tx) / 2,
+        ly: mid - 6,
+        back,
+      });
+    });
+    return out;
+  }, [edges, geometry, layout.backEdges]);
 
   if (nodes.length === 0) {
     return (
@@ -85,81 +170,149 @@ const FlowchartViewer = ({ nodes, edges }: Props) => {
 
   return (
     <div className="space-y-4">
-      <div className="glass-card rounded-xl p-5 sm:p-8">
-        <div className="flex flex-col items-center">
-          {levels.map((group, levelIndex) => (
-            <div key={levelIndex} className="w-full flex flex-col items-center">
-              {levelIndex > 0 && (
-                <ArrowDown className="w-5 h-5 text-primary/70 my-2 shrink-0" />
-              )}
-              <div className="w-full flex flex-wrap justify-center items-stretch gap-4">
-                {group.map((node) => {
-                  const Icon = typeIcon[node.node_type];
-                  const incoming = incomingOf(node.id);
-                  const tags = incoming.filter((i) => i.label);
-                  const loops = incoming.filter((i) => i.isBack);
-                  const items =
-                    (node as FlowNode & { items?: string[] }).items ?? [];
-                  return (
-                    <div
-                      key={node.id}
-                      className="flex flex-col items-center w-full max-w-xs"
-                    >
-                      {tags.length > 0 && (
-                        <div className="flex flex-wrap justify-center gap-1.5 mb-1.5">
-                          {tags.map((t, i) => (
-                            <span
-                              key={i}
-                              className="text-[10px] font-body px-2 py-0.5 rounded-full bg-primary/15 text-primary"
-                            >
-                              {t.label}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSelected((cur) => (cur?.id === node.id ? null : node))
-                        }
-                        className={`w-full text-left border p-4 transition-colors hover:border-primary ${shell(
-                          node.node_type,
-                        )} ${selected?.id === node.id ? "ring-1 ring-primary" : ""}`}
-                      >
-                        <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-primary font-body">
-                          {Icon && <Icon className="w-3 h-3" />}
-                          {typeLabel[node.node_type] ?? node.node_type}
-                        </span>
-                        <span className="block text-sm font-heading text-foreground mt-1 leading-snug">
-                          {node.title}
-                        </span>
-                        {items.length > 0 && (
-                          <ul className="mt-2 space-y-0.5">
-                            {items.map((item, i) => (
-                              <li
-                                key={i}
-                                className="text-xs text-muted-foreground font-body flex gap-1.5"
-                              >
-                                <span className="text-primary">•</span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </button>
-                      {loops.length > 0 && (
-                        <p className="mt-1.5 text-[10px] text-muted-foreground font-body inline-flex items-center gap-1">
-                          <CornerUpLeft className="w-3 h-3 text-accent" />
-                          retorna de {loops.map((l) => l.source?.title ?? "?").join(", ")}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+      <div className="glass-card rounded-xl p-3 sm:p-5">
+        <div className="flex flex-wrap gap-3 mb-4 px-1">
+          {Object.entries(palette).map(([type, cfg]) => (
+            <span
+              key={type}
+              className="inline-flex items-center gap-1.5 text-[11px] font-body text-muted-foreground"
+            >
+              <span
+                className="w-3 h-3 rounded-sm border"
+                style={{
+                  background: `hsl(var(${cfg.token}) / 0.18)`,
+                  borderColor: `hsl(var(${cfg.token}) / 0.7)`,
+                }}
+              />
+              {typeLabel[type]}
+            </span>
           ))}
         </div>
+
+        <div
+          className="overflow-x-auto rounded-lg dot-pattern"
+          style={{ background: "hsl(var(--flow-canvas) / 0.6)" }}
+        >
+          <div
+            className="relative mx-auto"
+            style={{ width: geometry.width, height: geometry.height, minWidth: NODE_W + 16 }}
+          >
+            <svg
+              className="absolute inset-0 pointer-events-none"
+              width={geometry.width}
+              height={geometry.height}
+            >
+              <defs>
+                <marker
+                  id="flow-arrow"
+                  markerWidth="9"
+                  markerHeight="9"
+                  refX="7"
+                  refY="4.5"
+                  orient="auto"
+                >
+                  <path d="M0,0 L9,4.5 L0,9 z" fill="hsl(var(--flow-line))" />
+                </marker>
+                <marker
+                  id="flow-arrow-back"
+                  markerWidth="9"
+                  markerHeight="9"
+                  refX="7"
+                  refY="4.5"
+                  orient="auto"
+                >
+                  <path d="M0,0 L9,4.5 L0,9 z" fill="hsl(var(--accent))" />
+                </marker>
+              </defs>
+              {paths.map((p) => (
+                <g key={p.key}>
+                  <path
+                    d={p.d}
+                    fill="none"
+                    stroke={p.back ? "hsl(var(--accent) / 0.8)" : "hsl(var(--flow-line))"}
+                    strokeWidth={1.6}
+                    strokeDasharray={p.back ? "5 4" : undefined}
+                    markerEnd={p.back ? "url(#flow-arrow-back)" : "url(#flow-arrow)"}
+                  />
+                  {p.label && (
+                    <text
+                      x={p.lx}
+                      y={p.ly}
+                      textAnchor="middle"
+                      className="font-body"
+                      fontSize="10"
+                      fill="hsl(var(--primary))"
+                    >
+                      {p.label}
+                    </text>
+                  )}
+                </g>
+              ))}
+            </svg>
+
+            {nodes.map((node) => {
+              const box = geometry.boxes[node.id];
+              if (!box) return null;
+              const cfg = palette[node.node_type] ?? palette.process;
+              const Icon = typeIcon[node.node_type] ?? ListOrdered;
+              const items = (node as FlowNode & { items?: string[] }).items ?? [];
+              const active = selected?.id === node.id;
+              return (
+                <div
+                  key={node.id}
+                  ref={(el) => (nodeRefs.current[node.id] = el)}
+                  className="absolute"
+                  style={{ left: box.x, top: box.y, width: box.w }}
+                >
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelected((cur) => (cur?.id === node.id ? null : node))
+                    }
+                    className={`w-full text-left border p-3 transition-shadow ${cfg.radius} ${
+                      cfg.dashed ? "border-dashed" : ""
+                    } ${active ? "shadow-lg" : ""}`}
+                    style={{
+                      background: `hsl(var(${cfg.token}) / ${active ? 0.28 : 0.14})`,
+                      borderColor: `hsl(var(${cfg.token}) / ${active ? 1 : 0.65})`,
+                      boxShadow: active
+                        ? `0 0 0 2px hsl(var(${cfg.token}) / 0.35)`
+                        : undefined,
+                    }}
+                  >
+                    <span
+                      className="flex items-center gap-1.5 text-[10px] uppercase tracking-wide font-body"
+                      style={{ color: `hsl(var(${cfg.token}))` }}
+                    >
+                      <Icon className="w-3 h-3" />
+                      {typeLabel[node.node_type] ?? node.node_type}
+                    </span>
+                    <span className="block text-[13px] font-heading font-semibold text-foreground mt-1 leading-snug">
+                      {node.title}
+                    </span>
+                    {items.length > 0 && (
+                      <ul className="mt-2 space-y-0.5">
+                        {items.map((item, i) => (
+                          <li
+                            key={i}
+                            className="text-[11px] text-muted-foreground font-body flex gap-1.5 leading-snug"
+                          >
+                            <span style={{ color: `hsl(var(${cfg.token}))` }}>•</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <p className="mt-3 px-1 text-[11px] text-muted-foreground font-body inline-flex items-center gap-1.5">
+          <CornerUpLeft className="w-3 h-3 text-accent" />
+          setas tracejadas indicam retorno a uma etapa anterior
+        </p>
       </div>
 
       {selected && (
@@ -204,6 +357,11 @@ const FlowchartViewer = ({ nodes, edges }: Props) => {
           </div>
         </aside>
       )}
+
+      <p className="text-[11px] text-muted-foreground font-body px-1">
+        Total de {nodes.length} etapas · use o scroll horizontal quando o fluxo abrir
+        ramificações.
+      </p>
     </div>
   );
 };
