@@ -11,6 +11,7 @@ import WebApps from "./pages/WebApps";
 import Experiences from "./pages/Experiences";
 import ExperienceDetail from "./pages/ExperienceDetail";
 import FlowchartDetail from "./pages/FlowchartDetail";
+import Assistant from "./pages/Assistant";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
