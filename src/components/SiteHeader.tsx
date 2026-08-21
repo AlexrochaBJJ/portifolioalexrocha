@@ -9,6 +9,7 @@ const navItems = [
   { to: "/dashboards", label: "Dashboards" },
   { to: "/aplicacoes", label: "Aplicações Web" },
   { to: "/experiencias", label: "Experiências" },
+  { to: "/assistente", label: "Assistente IA" },
 ];
 
 const SiteHeader = () => {
