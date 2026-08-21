@@ -3,7 +3,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { LabelWithCount } from "./CharCount";
 import { Textarea } from "@/components/ui/textarea";
 import { useAbout } from "@/hooks/useContent";
 import { useCrud } from "@/hooks/useCrud";
@@ -54,7 +54,7 @@ const AboutForm = () => {
   return (
     <div className="space-y-5 max-w-2xl">
       <div className="space-y-2">
-        <Label htmlFor="full_name">Nome completo</Label>
+        <LabelWithCount htmlFor="full_name" label="Nome completo" value={form.full_name} max={120} />
         <Input
           id="full_name"
           value={form.full_name}
@@ -63,7 +63,7 @@ const AboutForm = () => {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="headline">Título / cargo</Label>
+        <LabelWithCount htmlFor="headline" label="Título / cargo" value={form.headline} max={160} />
         <Input
           id="headline"
           value={form.headline}
@@ -72,7 +72,7 @@ const AboutForm = () => {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="summary">Resumo (aparece no topo da página)</Label>
+        <LabelWithCount htmlFor="summary" label="Resumo (aparece no topo da página)" value={form.summary} max={600} />
         <Textarea
           id="summary"
           rows={3}
@@ -82,7 +82,7 @@ const AboutForm = () => {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="bio">Quem sou eu (texto completo)</Label>
+        <LabelWithCount htmlFor="bio" label="Quem sou eu (texto completo)" value={form.bio} max={5000} />
         <Textarea
           id="bio"
           rows={10}
