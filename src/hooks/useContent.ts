@@ -100,7 +100,7 @@ export const useExperienceBySlug = (slug?: string) =>
       const dashCategories = experience.dashboard_categories ?? [];
       const appCategories = experience.webapp_categories ?? [];
 
-      const dashboardQueries: Promise<DashboardRow[]>[] = [];
+      const dashboardQueries: PromiseLike<DashboardRow[]>[] = [];
       if (dashCategories.length > 0) {
         dashboardQueries.push(
           supabase
@@ -124,7 +124,7 @@ export const useExperienceBySlug = (slug?: string) =>
         );
       }
 
-      const appQueries: Promise<WebProject[]>[] = [];
+      const appQueries: PromiseLike<WebProject[]>[] = [];
       if (appCategories.length > 0) {
         appQueries.push(
           supabase
