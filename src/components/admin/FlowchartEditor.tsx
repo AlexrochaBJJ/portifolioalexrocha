@@ -29,7 +29,7 @@ const FlowchartEditor = ({ chart, onBack }: Props) => {
       <Tabs defaultValue="list">
         <TabsList>
           <TabsTrigger value="list">Etapas (lista)</TabsTrigger>
-          <TabsTrigger value="diagram">Diagrama</TabsTrigger>
+          <TabsTrigger value="diagram">Diagrama (clicando)</TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-4">
@@ -43,13 +43,10 @@ const FlowchartEditor = ({ chart, onBack }: Props) => {
         </TabsContent>
 
         <TabsContent value="diagram" className="mt-4">
-          {isLoading ? (
-            <Skeleton className="h-[60vh] rounded-xl" />
-          ) : (
-            <FlowchartViewer nodes={data?.nodes ?? []} edges={data?.edges ?? []} />
-          )}
+          <FlowchartDiagramEditor flowchartId={chart.id} />
         </TabsContent>
       </Tabs>
+
     </div>
   );
 };
