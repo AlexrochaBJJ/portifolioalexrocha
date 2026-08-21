@@ -128,6 +128,8 @@ const CrudList = ({
           .split(",")
           .map((t) => t.trim())
           .filter(Boolean);
+      } else if (field.type === "multiselect") {
+        payload[field.name] = Array.isArray(value) ? value : [];
       } else if (field.type === "number") {
         payload[field.name] = Number(value) || 0;
       } else if (field.type === "switch") {
