@@ -52,7 +52,15 @@ const palette: Record<string, { token: string; radius: string; dashed?: boolean 
 const V_GAP = 64;
 const NODE_W = NODE_LAYOUT_WIDTH;
 
-const FlowchartViewer = ({ nodes, edges }: Props) => {
+const FlowchartViewer = ({
+  nodes,
+  edges,
+  editable = false,
+  onEditNode,
+  onAddAfter,
+  onDeleteNode,
+}: Props) => {
+
   const [selected, setSelected] = useState<FlowNode | null>(null);
   const [heights, setHeights] = useState<Record<string, number>>({});
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
