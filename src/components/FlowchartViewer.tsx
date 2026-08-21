@@ -131,7 +131,9 @@ const FlowchartViewer = ({
     return { boxes, width, height };
   }, [nodes, levels, layout, heights]);
 
-  const paths = useMemo(() => {
+  // rotas: arestas que pulam níveis (ou voltam) saem pela laterais, nunca por
+  // dentro dos cards
+  const routing = useMemo(() => {
     const out: {
       key: string;
       d: string;
@@ -140,7 +142,29 @@ const FlowchartViewer = ({
       ly?: number;
       back: boolean;
     }[] = [];
-    edges.forEach((e) => {
+
+    const rightEdge = Math.max(
+      ...Object.values(geometry.boxes).map((b) => b.x + b.w),
+      NODE_W + 8,
+    );
+    const LANE_GAP = 20;
+    let laneCount = 0;
+    const nextLane = () => rightEdge + 26 + laneCount++ * LANE_GAP;
+
+    // primeiro as arestas que precisam de canaleta, para reservar as faixas
+    const needsLane = (e: FlowEdge) => {
+      const key = `${e.source_node_id}->${e.target_node_id}`;
+      if (layout.backEdges.has(key)) return true;
+      const rs = rankOf[e.source_node_id];
+      const rt = rankOf[e.target_node_id];
+      return rs !== undefined && rt !== undefined && rt - rs > 1;
+    };
+
+    const ordered = [...edges].sort(
+      (a, b) => Number(needsLane(b)) - Number(needsLane(a)),
+    );
+
+    ordered.forEach((e) => {
       const a = geometry.boxes[e.source_node_id];
       const b = geometry.boxes[e.target_node_id];
       if (!a || !b) return;
@@ -152,9 +176,18 @@ const FlowchartViewer = ({
       const ty = b.y;
 
       if (back) {
-        const side = Math.max(a.x + a.w, b.x + b.w) + 34;
-        const d = `M ${a.x + a.w} ${a.y + a.h / 2} H ${side} V ${b.y + b.h / 2} H ${b.x + b.w}`;
-        out.push({ key, d, label: e.label, lx: side + 4, ly: (a.y + b.y) / 2, back });
+        const lane = nextLane();
+        const d = `M ${a.x + a.w} ${a.y + a.h / 2} H ${lane} V ${b.y + b.h / 2} H ${b.x + b.w}`;
+        out.push({ key, d, label: e.label, lx: lane + 6, ly: (a.y + b.y) / 2, back });
+        return;
+      }
+
+      if (needsLane(e)) {
+        // desvia pela lateral direita para não cortar os cards intermediários
+        const lane = nextLane();
+        const drop = Math.min(24, V_GAP / 2);
+        const d = `M ${sx} ${sy} V ${sy + drop} H ${lane} V ${ty - drop} H ${tx} V ${ty}`;
+        out.push({ key, d, label: e.label, lx: lane + 6, ly: (sy + ty) / 2, back: false });
         return;
       }
 
@@ -172,8 +205,17 @@ const FlowchartViewer = ({
         back,
       });
     });
-    return out;
-  }, [edges, geometry, layout.backEdges]);
+
+    const width = Math.max(
+      geometry.width,
+      laneCount > 0 ? rightEdge + 26 + (laneCount - 1) * LANE_GAP + 60 : 0,
+    );
+    return { paths: out, width };
+  }, [edges, geometry, layout.backEdges, rankOf]);
+
+  const paths = routing.paths;
+  const canvasWidth = routing.width;
+
 
   if (nodes.length === 0) {
     return (
