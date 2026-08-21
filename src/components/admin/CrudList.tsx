@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LabelWithCount } from "./CharCount";
+
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -279,8 +281,27 @@ const CrudList = ({
                     : ""
                 }`}
               >
-                <Label>{field.label}</Label>
+                {(() => {
+                  const counted =
+                    field.type === undefined ||
+                    field.type === "text" ||
+                    field.type === "url" ||
+                    field.type === "textarea" ||
+                    field.type === "tags";
+                  if (!counted) return <Label>{field.label}</Label>;
+                  const limit =
+                    field.maxLength ?? (field.type === "textarea" ? 2000 : 500);
+                  return (
+                    <LabelWithCount
+                      label={field.label}
+                      value={String(form[field.name] ?? "")}
+                      max={limit}
+                    />
+                  );
+                })()}
                 {renderField(field)}
+
+
               </div>
             ))}
           </div>
