@@ -28,7 +28,15 @@ import {
 export interface FieldDef {
   name: string;
   label: string;
-  type?: "text" | "textarea" | "number" | "tags" | "switch" | "select" | "url";
+  type?:
+    | "text"
+    | "textarea"
+    | "number"
+    | "tags"
+    | "switch"
+    | "select"
+    | "multiselect"
+    | "url";
   options?: string[];
   choices?: { label: string; value: string }[];
   required?: boolean;
