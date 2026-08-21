@@ -12,7 +12,7 @@ const WebProjectsManager = () => {
       isLoading={isLoading}
       items={data ?? []}
       primaryField="title"
-      secondaryField="url"
+      secondaryField="category"
       fields={[
         { name: "title", label: "Título", required: true, maxLength: 150 },
         { name: "category", label: "Categoria", required: true, maxLength: 60 },
