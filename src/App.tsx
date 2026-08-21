@@ -24,6 +24,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<About />} />
             <Route path="/dashboards" element={<Dashboards />} />
