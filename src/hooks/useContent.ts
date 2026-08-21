@@ -11,6 +11,13 @@ export type DashboardRow = Tables<"dashboards">;
 export type Flowchart = Tables<"flowcharts">;
 export type FlowNode = Tables<"flowchart_nodes">;
 export type FlowEdge = Tables<"flowchart_edges">;
+export type ExperienceHighlight = Tables<"experience_highlights">;
+
+const uniqueById = <T extends { id: string }>(rows: T[]) => {
+  const map = new Map<string, T>();
+  rows.forEach((row) => map.set(row.id, row));
+  return Array.from(map.values());
+};
 
 export const useAbout = () =>
   useQuery({
