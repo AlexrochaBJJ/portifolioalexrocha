@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -11,8 +12,33 @@ import SiteLayout from "@/components/SiteLayout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCareer } from "@/hooks/useContent";
 
+const CURRENT = /atual|presente|hoje|momento/i;
+
+/** Ano final da experiência (ou "Atual") a partir do texto do período. */
+const endLabel = (period: string) => {
+  if (CURRENT.test(period)) return "Atual";
+  const years = period.match(/\d{4}/g);
+  return years?.[years.length - 1] ?? period.trim();
+};
+
+const endValue = (period: string) => {
+  if (CURRENT.test(period)) return 9999;
+  const years = period.match(/\d{4}/g);
+  return years ? Number(years[years.length - 1]) : 0;
+};
+
 const Experiences = () => {
   const { data: career, isLoading } = useCareer();
+
+  const timeline = useMemo(
+    () =>
+      [...(career ?? [])].sort((a, b) => {
+        const diff = endValue(b.period) - endValue(a.period);
+        return diff !== 0 ? diff : a.sort_order - b.sort_order;
+      }),
+    [career],
+  );
+
 
   return (
     <SiteLayout>
@@ -56,8 +82,9 @@ const Experiences = () => {
               />
 
               <ol className="space-y-10 md:space-y-14">
-                {(career ?? []).map((exp, index) => {
+                {timeline.map((exp, index) => {
                   const isRight = index % 2 === 1;
+                  const year = endLabel(exp.period);
                   return (
                     <motion.li
                       key={exp.id}
@@ -79,17 +106,28 @@ const Experiences = () => {
                           isRight ? "md:ml-auto" : "md:mr-auto"
                         }`}
                       >
-                        {/* período fora do card no desktop */}
+                        {/* ano de saída em destaque, do lado oposto ao card */}
                         <div
-                          className={`hidden md:flex absolute top-5 items-center gap-1.5 text-xs font-medium text-primary font-body ${
+                          className={`hidden md:flex absolute top-1 flex-col ${
                             isRight
-                              ? "right-[calc(50%+2.5rem)] justify-end"
-                              : "left-[calc(50%+2.5rem)]"
+                              ? "right-[calc(50%+2.5rem)] items-end text-right"
+                              : "left-[calc(50%+2.5rem)] items-start"
                           }`}
                         >
-                          <CalendarRange className="w-3.5 h-3.5" />
-                          {exp.period}
+                          <span className="text-3xl lg:text-4xl font-bold font-heading text-gradient-amber leading-none">
+                            {year}
+                          </span>
+                          <span className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-muted-foreground font-body">
+                            <CalendarRange className="w-3.5 h-3.5" />
+                            {exp.period}
+                          </span>
                         </div>
+
+                        {/* ano em destaque no mobile */}
+                        <div className="md:hidden mb-2 text-2xl font-bold font-heading text-gradient-amber leading-none">
+                          {year}
+                        </div>
+
 
                         <Link
                           to={`/experiencias/${exp.slug}`}
