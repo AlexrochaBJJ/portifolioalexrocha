@@ -10,7 +10,10 @@ import {
   GitBranch,
   CornerUpLeft,
   ListOrdered,
+  Plus,
+  Trash2,
 } from "lucide-react";
+
 import type { FlowNode, FlowEdge } from "@/hooks/useContent";
 import { computeFlowLayout, NODE_LAYOUT_WIDTH } from "@/lib/flowLayout";
 
