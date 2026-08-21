@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import LovableProjectCard from "./LovableProjectCard";
@@ -6,6 +7,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const LovableProjectsGallery = () => {
   const { data: projects, isLoading } = useWebProjects();
+  const [activeCategory, setActiveCategory] = useState("Todos");
+
+  const categories = useMemo(
+    () => ["Todos", ...Array.from(new Set((projects ?? []).map((p) => p.category)))],
+    [projects],
+  );
+
+  const filtered =
+    activeCategory === "Todos"
+      ? projects ?? []
+      : (projects ?? []).filter((p) => p.category === activeCategory);
+
 
   return (
     <section id="lovable-projects" className="py-20 px-6">
