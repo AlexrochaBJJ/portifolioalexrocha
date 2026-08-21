@@ -63,6 +63,7 @@ interface Props {
 const emptyValue = (field: FieldDef) => {
   if (field.type === "switch") return true;
   if (field.type === "number") return 0;
+  if (field.type === "multiselect") return [];
   if (field.type === "tags") return "";
   return "";
 };
