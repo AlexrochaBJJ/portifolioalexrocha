@@ -8,18 +8,24 @@ import {
   TextRun,
 } from "docx";
 
-const inlineRuns = (text: string, bold = false) => {
+const inlineRuns = (text: string, opts: { bold?: boolean; size?: number; color?: string } = {}) => {
+  const { bold = false, size = 22, color } = opts;
   const runs: TextRun[] = [];
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   parts.forEach((part) => {
     if (!part) return;
-    if (part.startsWith("**") && part.endsWith("**")) {
-      runs.push(new TextRun({ text: part.slice(2, -2), bold: true, font: "Arial", size: 22 }));
-    } else {
-      runs.push(new TextRun({ text: part, bold, font: "Arial", size: 22 }));
-    }
+    const isBold = part.startsWith("**") && part.endsWith("**");
+    runs.push(
+      new TextRun({
+        text: isBold ? part.slice(2, -2) : part,
+        bold: isBold || bold,
+        font: "Arial",
+        size,
+        ...(color ? { color } : {}),
+      }),
+    );
   });
-  return runs.length ? runs : [new TextRun({ text, font: "Arial", size: 22 })];
+  return runs.length ? runs : [new TextRun({ text, font: "Arial", size })];
 };
 
 /** Converte o markdown simples devolvido pela IA em um documento Word. */
@@ -42,6 +48,7 @@ export const buildReportDocx = (markdown: string, meta: { title: string; subtitl
     .map((line) => line.trimEnd())
     .forEach((line) => {
       const trimmed = line.trim();
+      if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) return;
       if (!trimmed) {
         children.push(new Paragraph({ children: [new TextRun({ text: "", font: "Arial" })] }));
         return;
@@ -51,31 +58,22 @@ export const buildReportDocx = (markdown: string, meta: { title: string; subtitl
           new Paragraph({
             heading: HeadingLevel.HEADING_2,
             spacing: { before: 240, after: 120 },
-            children: inlineRuns(trimmed.slice(4)),
+            children: inlineRuns(trimmed.slice(4), { bold: true, size: 26 }),
           }),
         );
         return;
       }
-      if (trimmed.startsWith("## ")) {
+      if (trimmed.startsWith("## ") || trimmed.startsWith("# ")) {
         children.push(
           new Paragraph({
             heading: HeadingLevel.HEADING_1,
             spacing: { before: 320, after: 160 },
-            children: inlineRuns(trimmed.slice(3)),
+            children: inlineRuns(trimmed.replace(/^#+\s+/, ""), { bold: true, size: 30 }),
           }),
         );
         return;
       }
-      if (trimmed.startsWith("# ")) {
-        children.push(
-          new Paragraph({
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 320, after: 160 },
-            children: inlineRuns(trimmed.slice(2)),
-          }),
-        );
-        return;
-      }
+
       if (/^[-*•]\s+/.test(trimmed)) {
         children.push(
           new Paragraph({
