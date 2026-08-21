@@ -223,26 +223,25 @@ const ExperienceDetail = () => {
                 title="Destaques e impacto"
                 description="O que foi feito e no que resultou."
               >
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {highlights.map((item) => (
                     <div
                       key={item.id}
-                      className="glass-card rounded-2xl p-6 md:p-7 md:grid md:grid-cols-2 md:gap-8"
+                      className="glass-card rounded-2xl p-6 md:p-8"
                     >
-                      <div>
-                        <p className="text-[0.7rem] uppercase tracking-widest text-primary/80 font-body mb-2">
-                          O que fiz
-                        </p>
-                        <p className="text-[0.975rem] text-foreground font-body leading-7 whitespace-pre-line">
-                          {item.highlight}
-                        </p>
-                      </div>
+                      <p className="text-[0.7rem] uppercase tracking-widest text-primary/80 font-body mb-2">
+                        O que fiz
+                      </p>
+                      <p className="text-[0.975rem] text-foreground font-body leading-8 whitespace-pre-line">
+                        {item.highlight}
+                      </p>
                       {item.impact && (
-                        <div className="mt-5 pt-5 border-t border-border/40 md:mt-0 md:pt-0 md:border-t-0 md:border-l md:pl-8">
-                          <p className="text-[0.7rem] uppercase tracking-widest text-muted-foreground font-body mb-2">
+                        <div className="mt-6 pt-6 border-t border-border/40">
+                          <p className="inline-flex items-center gap-1.5 text-[0.7rem] uppercase tracking-widest text-muted-foreground font-body mb-2">
+                            <TrendingUp className="w-3.5 h-3.5 text-primary" />
                             Impacto
                           </p>
-                          <p className="text-[0.975rem] text-muted-foreground font-body leading-7 whitespace-pre-line">
+                          <p className="text-[0.975rem] text-muted-foreground font-body leading-8 whitespace-pre-line">
                             {item.impact}
                           </p>
                         </div>
@@ -250,6 +249,7 @@ const ExperienceDetail = () => {
                     </div>
                   ))}
                 </div>
+
               </Section>
             )}
 
