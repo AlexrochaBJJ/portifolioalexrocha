@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { LabelWithCount } from "./CharCount";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -335,7 +336,7 @@ const FlowchartStepList = ({ flowchartId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Título</Label>
+                <LabelWithCount label="Título" value={draft.title} max={150} />
                 <Input
                   value={draft.title}
                   maxLength={150}
@@ -345,7 +346,7 @@ const FlowchartStepList = ({ flowchartId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Itens (um por linha)</Label>
+                <LabelWithCount label="Itens (um por linha)" value={draft.items} max={2000} />
                 <Textarea
                   rows={4}
                   value={draft.items}
@@ -388,7 +389,7 @@ const FlowchartStepList = ({ flowchartId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Rótulo da seta (opcional)</Label>
+                <LabelWithCount label="Rótulo da seta (opcional)" value={draft.edgeLabel} max={60} />
                 <Input
                   value={draft.edgeLabel}
                   maxLength={60}
@@ -398,7 +399,7 @@ const FlowchartStepList = ({ flowchartId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Descrição (aparece ao clicar)</Label>
+                <LabelWithCount label="Descrição (aparece ao clicar)" value={draft.description} max={2000} />
                 <Textarea
                   rows={3}
                   value={draft.description}
@@ -408,7 +409,7 @@ const FlowchartStepList = ({ flowchartId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Responsável</Label>
+                <LabelWithCount label="Responsável" value={draft.owner} max={120} />
                 <Input
                   value={draft.owner}
                   maxLength={120}
@@ -417,7 +418,7 @@ const FlowchartStepList = ({ flowchartId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Sistema / ferramenta</Label>
+                <LabelWithCount label="Sistema / ferramenta" value={draft.system} max={120} />
                 <Input
                   value={draft.system}
                   maxLength={120}
@@ -426,7 +427,7 @@ const FlowchartStepList = ({ flowchartId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Observações</Label>
+                <LabelWithCount label="Observações" value={draft.notes} max={300} />
                 <Input
                   value={draft.notes}
                   maxLength={300}
