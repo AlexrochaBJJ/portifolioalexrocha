@@ -254,11 +254,11 @@ const FlowchartViewer = ({
         >
           <div
             className="relative mx-auto"
-            style={{ width: geometry.width, height: geometry.height, minWidth: NODE_W + 16 }}
+            style={{ width: canvasWidth, height: geometry.height, minWidth: NODE_W + 16 }}
           >
             <svg
               className="absolute inset-0 pointer-events-none"
-              width={geometry.width}
+              width={canvasWidth}
               height={geometry.height}
             >
               <defs>
