@@ -99,10 +99,13 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
                 title={dashboard.title}
                 {...(isHtml
                   ? {
-                      srcDoc: dashboard.html_code ?? "",
-                      sandbox: "allow-scripts allow-popups allow-downloads allow-forms",
+                      srcDoc: sandboxedHtml,
+                      sandbox:
+                        "allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads allow-forms allow-modals",
+                      referrerPolicy: "no-referrer" as const,
                     }
                   : { src: dashboard.embed_url })}
+
                 className="w-full h-full bg-card"
                 allowFullScreen
                 onLoad={() => setIsLoading(false)}
