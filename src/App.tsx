@@ -7,7 +7,10 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ScrollToTop from "@/components/ScrollToTop";
 import About from "./pages/About";
 import Dashboards from "./pages/Dashboards";
+import DashboardDetail from "./pages/DashboardDetail";
 import WebApps from "./pages/WebApps";
+import WebAppDetail from "./pages/WebAppDetail";
+
 import Experiences from "./pages/Experiences";
 import ExperienceDetail from "./pages/ExperienceDetail";
 import FlowchartDetail from "./pages/FlowchartDetail";
@@ -40,7 +43,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<About />} />
             <Route path="/dashboards" element={<Dashboards />} />
+            <Route path="/dashboards/:id" element={<DashboardDetail />} />
             <Route path="/aplicacoes" element={<WebApps />} />
+            <Route path="/aplicacoes/:id" element={<WebAppDetail />} />
+
             <Route path="/experiencias" element={<Experiences />} />
             <Route path="/experiencias/:slug" element={<ExperienceDetail />} />
             <Route path="/fluxogramas/:slug" element={<FlowchartDetail />} />

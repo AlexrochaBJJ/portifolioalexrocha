@@ -334,7 +334,6 @@ const ExperienceDetail = () => {
                       key={dashboard.id}
                       dashboard={dashboard}
                       index={index}
-                      onOpen={setOpenDashboard}
                     />
                   ))}
                 </div>

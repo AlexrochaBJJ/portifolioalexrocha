@@ -1,14 +1,12 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import DashboardCard from "./DashboardCard";
-import DashboardViewer from "./DashboardViewer";
-import { useDashboards, type DashboardRow } from "@/hooks/useContent";
+import { useDashboards } from "@/hooks/useContent";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DashboardGallery = () => {
   const { data: dashboards, isLoading } = useDashboards();
   const [activeCategory, setActiveCategory] = useState("Todos");
-  const [selected, setSelected] = useState<DashboardRow | null>(null);
 
   const categories = useMemo(
     () => ["Todos", ...Array.from(new Set((dashboards ?? []).map((d) => d.category)))],
@@ -34,8 +32,8 @@ const DashboardGallery = () => {
             Dashboards <span className="text-gradient-amber">Power BI</span>
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto font-body">
-            Clique em qualquer dashboard para interagir diretamente com os dados e
-            explorar as visualizações. Todos os dados são fictícios.
+            Clique em um dashboard para ver os detalhes de como ele funciona e abri-lo
+            em modo interativo. Todos os dados são fictícios.
           </p>
           <div className="line-gradient max-w-xs mx-auto mt-8" />
         </motion.div>
@@ -66,13 +64,10 @@ const DashboardGallery = () => {
                   key={dashboard.id}
                   dashboard={dashboard}
                   index={index}
-                  onOpen={setSelected}
                 />
               ))}
         </div>
       </div>
-
-      <DashboardViewer dashboard={selected} onClose={() => setSelected(null)} />
     </section>
   );
 };

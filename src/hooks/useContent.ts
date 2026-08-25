@@ -316,3 +316,35 @@ export const useExperienceWebProjectLinks = (experienceId?: string) =>
       return data;
     },
   });
+
+export const useDashboardById = (id?: string) =>
+  useQuery({
+    queryKey: ["dashboard", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("dashboards")
+        .select("*")
+        .eq("id", id!)
+        .eq("is_published", true)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+export const useWebProjectById = (id?: string) =>
+  useQuery({
+    queryKey: ["web_project", id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("web_projects")
+        .select("*")
+        .eq("id", id!)
+        .eq("is_published", true)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
