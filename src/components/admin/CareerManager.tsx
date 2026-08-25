@@ -64,8 +64,7 @@ const CareerManager = () => {
         {
           name: "description",
           label: "Descrição",
-          type: "textarea",
-          maxLength: 8000,
+          type: "richtext",
         },
         {
           name: "responsibilities",

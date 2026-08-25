@@ -1,3 +1,4 @@
+import RichText from "@/components/RichText";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -172,15 +173,7 @@ const ExperienceDetail = () => {
                 icon={FileText}
                 title="Sobre a atuação"
               >
-                <div className="rich-text">
-                  {description
-                    .split(/\n\s*\n|\n/)
-                    .map((p) => p.trim())
-                    .filter(Boolean)
-                    .map((paragraph, i) => (
-                      <p key={i}>{paragraph}</p>
-                    ))}
-                </div>
+                <RichText value={description} />
 
               </Section>
             )}

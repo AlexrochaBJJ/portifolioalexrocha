@@ -9,6 +9,7 @@ import { iconMap, iconNames } from "@/lib/icons";
 
 
 import { Textarea } from "@/components/ui/textarea";
+import RichTextField from "./RichTextField";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -35,6 +36,7 @@ export interface FieldDef {
   type?:
     | "text"
     | "textarea"
+    | "richtext"
     | "number"
     | "tags"
     | "switch"
@@ -166,6 +168,16 @@ const CrudList = ({
 
   const renderField = (field: FieldDef) => {
     const value = form[field.name];
+    if (field.type === "richtext") {
+      return (
+        <RichTextField
+          value={String(value ?? "")}
+          maxLength={field.maxLength ?? null}
+          placeholder={field.placeholder}
+          onChange={(next) => setForm({ ...form, [field.name]: next })}
+        />
+      );
+    }
     if (field.type === "textarea") {
       return (
         <Textarea
@@ -373,6 +385,7 @@ const CrudList = ({
                 key={field.name}
                 className={`space-y-2 ${
                   field.type === "textarea" ||
+                  field.type === "richtext" ||
                   field.type === "multiselect" ||
                   field.type === "icon" ||
                   field.type === "code"
@@ -386,13 +399,14 @@ const CrudList = ({
                     field.type === "text" ||
                     field.type === "url" ||
                     field.type === "textarea" ||
+                    field.type === "richtext" ||
                     field.type === "code" ||
                     field.type === "combo" ||
                     field.type === "tags";
                   if (!counted) return <Label>{field.label}</Label>;
                   const limit =
                     field.maxLength ??
-                    (field.type === "code"
+                    (field.type === "code" || field.type === "richtext"
                       ? null
                       : field.type === "textarea"
                         ? 2000
