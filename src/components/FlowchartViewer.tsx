@@ -269,6 +269,13 @@ const FlowchartViewer = ({
   const paths = routing.paths;
   const canvasWidth = routing.width;
 
+  // escala automática: o fluxograma inteiro cabe na largura disponível,
+  // sem precisar de scroll horizontal
+  const scale = containerWidth
+    ? Math.min(1, containerWidth / canvasWidth)
+    : 1;
+
+
 
   if (nodes.length === 0) {
     return (
