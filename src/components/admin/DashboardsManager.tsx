@@ -61,7 +61,7 @@ const DashboardsManager = () => {
           showIf: (v) => v.source_type === "html",
         },
         { name: "description", label: "Descrição", type: "textarea", maxLength: 1500 },
-        { name: "icon", label: "Ícone", type: "select", options: iconNames },
+        { name: "icon", label: "Ícone", type: "icon" },
         { name: "sort_order", label: "Ordem", type: "number" },
         { name: "is_published", label: "Publicado", type: "switch" },
       ]}

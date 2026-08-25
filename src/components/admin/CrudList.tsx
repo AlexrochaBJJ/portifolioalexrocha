@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LabelWithCount } from "./CharCount";
+import { iconMap, iconNames } from "@/lib/icons";
+
 
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
