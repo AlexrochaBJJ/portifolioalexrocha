@@ -66,7 +66,6 @@ const DashboardGallery = () => {
                   key={dashboard.id}
                   dashboard={dashboard}
                   index={index}
-                  onOpen={setSelected}
                 />
               ))}
         </div>
