@@ -322,13 +322,21 @@ const FlowchartViewer = ({
         </div>
 
         <div
-          className="overflow-x-auto rounded-lg dot-pattern"
+          ref={wrapRef}
+          className="overflow-hidden rounded-lg dot-pattern"
           style={{ background: "hsl(var(--flow-canvas) / 0.6)" }}
         >
+          <div style={{ height: geometry.height * scale }}>
           <div
             className="relative mx-auto"
-            style={{ width: canvasWidth, height: geometry.height, minWidth: NODE_W + 16 }}
+            style={{
+              width: canvasWidth,
+              height: geometry.height,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+            }}
           >
+
             <svg
               className="absolute inset-0 pointer-events-none"
               width={canvasWidth}
