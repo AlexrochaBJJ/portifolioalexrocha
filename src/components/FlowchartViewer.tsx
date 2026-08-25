@@ -71,6 +71,19 @@ const FlowchartViewer = ({
   const [selected, setSelected] = useState<FlowNode | null>(null);
   const [heights, setHeights] = useState<Record<string, number>>({});
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const update = () => setContainerWidth(el.clientWidth);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
 
   const layout = useMemo(() => computeFlowLayout(nodes, edges), [nodes, edges]);
 
@@ -269,6 +282,13 @@ const FlowchartViewer = ({
   const paths = routing.paths;
   const canvasWidth = routing.width;
 
+  // escala automática: o fluxograma inteiro cabe na largura disponível,
+  // sem precisar de scroll horizontal
+  const scale = containerWidth
+    ? Math.min(1, containerWidth / canvasWidth)
+    : 1;
+
+
 
   if (nodes.length === 0) {
     return (
@@ -302,13 +322,21 @@ const FlowchartViewer = ({
         </div>
 
         <div
-          className="overflow-x-auto rounded-lg dot-pattern"
+          ref={wrapRef}
+          className="overflow-hidden rounded-lg dot-pattern"
           style={{ background: "hsl(var(--flow-canvas) / 0.6)" }}
         >
+          <div style={{ height: geometry.height * scale }}>
           <div
             className="relative mx-auto"
-            style={{ width: canvasWidth, height: geometry.height, minWidth: NODE_W + 16 }}
+            style={{
+              width: canvasWidth,
+              height: geometry.height,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+            }}
           >
+
             <svg
               className="absolute inset-0 pointer-events-none"
               width={canvasWidth}
@@ -454,7 +482,9 @@ const FlowchartViewer = ({
               );
             })}
           </div>
+          </div>
         </div>
+
         <p className="mt-3 px-1 text-[11px] text-muted-foreground font-body inline-flex items-center gap-1.5">
           <CornerUpLeft className="w-3 h-3 text-accent" />
           setas tracejadas indicam retorno a uma etapa anterior
