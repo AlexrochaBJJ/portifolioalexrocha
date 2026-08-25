@@ -7,7 +7,10 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ScrollToTop from "@/components/ScrollToTop";
 import About from "./pages/About";
 import Dashboards from "./pages/Dashboards";
+import DashboardDetail from "./pages/DashboardDetail";
 import WebApps from "./pages/WebApps";
+import WebAppDetail from "./pages/WebAppDetail";
+
 import Experiences from "./pages/Experiences";
 import ExperienceDetail from "./pages/ExperienceDetail";
 import FlowchartDetail from "./pages/FlowchartDetail";
