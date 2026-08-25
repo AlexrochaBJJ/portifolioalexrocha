@@ -23,7 +23,7 @@ const DashboardDetail = () => {
   return (
     <SiteLayout>
       <section className="py-12 px-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <Link
             to="/dashboards"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors font-body mb-8"

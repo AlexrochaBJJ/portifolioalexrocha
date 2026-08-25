@@ -60,7 +60,7 @@ const Experiences = () => {
               Linha do tempo das minhas{" "}
               <span className="text-gradient-amber">experiências</span>
             </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto font-body">
+            <p className="text-muted-foreground max-w-3xl mx-auto font-body">
               Percorra a trajetória em ordem e clique em qualquer etapa para ver
               os detalhes, resultados e os fluxogramas dos processos.
             </p>

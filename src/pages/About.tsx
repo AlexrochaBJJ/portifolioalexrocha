@@ -66,7 +66,7 @@ const About = () => {
           )}
 
           <motion.p
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 font-body"
+            className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 font-body"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
@@ -104,7 +104,7 @@ const About = () => {
       {/* Bio */}
       {about?.bio && (
         <section className="py-16 px-6 border-t border-border/30">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold font-heading mb-6">
               Quem <span className="text-gradient-amber">sou eu</span>
             </h2>

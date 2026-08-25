@@ -40,7 +40,7 @@ const Section = ({
   children: React.ReactNode;
 }) => (
   <section id={id} className="scroll-mt-28 py-12 border-t border-border/40 first:border-t-0">
-    <div className="mb-7 max-w-2xl">
+    <div className="mb-7 max-w-3xl">
       <h2 className="inline-flex items-center gap-2.5 text-2xl md:text-[1.75rem] font-bold font-heading">
         <span className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
           <Icon className="w-4 h-4 text-primary" />
@@ -121,7 +121,7 @@ const ExperienceDetail = () => {
               {exp.sector || "Experiência profissional"}
             </span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold font-heading tracking-tight mb-3 max-w-3xl leading-[1.1]">
+          <h1 className="text-3xl md:text-5xl font-bold font-heading tracking-tight mb-3 max-w-4xl leading-[1.1]">
             {exp.role_title}
           </h1>
           <p className="text-lg md:text-xl text-primary font-body mb-6">{exp.company}</p>

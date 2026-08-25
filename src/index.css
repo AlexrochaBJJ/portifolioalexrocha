@@ -132,7 +132,7 @@
     white-space: pre-line;
     overflow-wrap: anywhere;
     text-wrap: pretty;
-    max-width: 68ch;
+    max-width: 85ch;
   }
 
   .rich-text > * + * {

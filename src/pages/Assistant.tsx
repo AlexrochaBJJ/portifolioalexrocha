@@ -29,7 +29,7 @@ const Assistant = () => {
     <SiteLayout>
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-10 max-w-2xl">
+          <div className="mb-10 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-card mb-4">
               <Bot className="w-4 h-4 text-primary" />
               <span className="text-xs text-muted-foreground font-body">
