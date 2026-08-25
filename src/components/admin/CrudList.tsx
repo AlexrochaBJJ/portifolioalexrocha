@@ -40,6 +40,7 @@ export interface FieldDef {
     | "multiselect"
     | "combo"
     | "code"
+    | "icon"
     | "url";
   options?: string[];
   choices?: { label: string; value: string }[];
@@ -49,6 +50,7 @@ export interface FieldDef {
   hint?: string;
   showIf?: (values: Record<string, unknown>) => boolean;
 }
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
