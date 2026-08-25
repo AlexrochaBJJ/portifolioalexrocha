@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot, FileDown, Loader2, MessageSquare, Send, X } from "lucide-react";
+import { Bot, FileDown, Loader2, MessageSquare, Send, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
@@ -132,20 +132,29 @@ const FloatingAiChat = () => {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed z-50 bottom-24 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[380px] max-h-[70vh] flex flex-col glass-card rounded-2xl overflow-hidden shadow-2xl"
+            className="fixed z-50 bottom-28 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[420px] max-h-[75vh] flex flex-col glass-card rounded-2xl overflow-hidden shadow-2xl border-primary/20"
             initial={{ opacity: 0, y: 20, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40">
-              <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center">
-                <Bot className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40 bg-gradient-to-r from-primary/10 to-transparent">
+              <div className="relative w-10 h-10 shrink-0 rounded-full bg-primary/15 flex items-center justify-center border border-primary/30">
+                <Bot className="w-5 h-5 text-primary" />
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold font-heading">Assistente de IA</p>
+                <p className="text-sm font-semibold font-heading flex items-center gap-1.5">
+                  Rocha
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
+                    IA
+                  </span>
+                </p>
                 <p className="text-[11px] text-muted-foreground font-body truncate">
-                  Baseado nas informações do portfólio
+                  Assistente inteligente do portfólio
                 </p>
               </div>
               <button
@@ -160,7 +169,12 @@ const FloatingAiChat = () => {
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 text-sm font-body">
               {messages.length === 0 && (
                 <div className="space-y-3 text-muted-foreground">
-                  <p>Pergunte sobre trajetória, resultados e processos.</p>
+                  <div className="flex items-start gap-2 text-foreground">
+                    <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                    <p>
+                      Oi! Sou a <strong className="text-primary">Rocha</strong>, a IA deste portfólio. Pergunte sobre trajetória, resultados e processos.
+                    </p>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {SUGGESTIONS.map((s) => (
                       <button
@@ -189,7 +203,7 @@ const FloatingAiChat = () => {
                       : streaming && (
                           <span className="inline-flex items-center gap-2 text-primary">
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            Pensando...
+                            Rocha está pensando...
                           </span>
                         )}
                   </div>
@@ -210,7 +224,7 @@ const FloatingAiChat = () => {
                       ask(input);
                     }
                   }}
-                  placeholder="Escreva sua pergunta..."
+                  placeholder="Pergunte para a Rocha..."
                   maxLength={1000}
                   rows={1}
                   className="resize-none font-body min-h-[40px]"
@@ -246,13 +260,38 @@ const FloatingAiChat = () => {
         )}
       </AnimatePresence>
 
-      <button
-        onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Fechar assistente de IA" : "Abrir assistente de IA"}
-        className="fixed z-50 bottom-5 right-4 sm:right-6 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-xl flex items-center justify-center hover:scale-105 transition-transform"
-      >
-        {open ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
-      </button>
+      <div className="fixed z-50 bottom-5 right-4 sm:right-6 flex items-end flex-col gap-2">
+        <AnimatePresence>
+          {!open && (
+            <motion.div
+              initial={{ opacity: 0, x: 20, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 20, scale: 0.9 }}
+              transition={{ duration: 0.25 }}
+              className="hidden sm:flex items-center gap-2 mb-2"
+            >
+              <div className="glass-card px-3 py-2 rounded-xl rounded-br-sm text-xs text-foreground shadow-lg border-primary/20">
+                <p className="font-semibold">Fale com a Rocha</p>
+                <p className="text-muted-foreground">IA do portfólio</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "Fechar assistente de IA" : "Abrir assistente de IA"}
+          className="relative group h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-xl flex items-center justify-center hover:scale-105 transition-transform ai-rocha-pulse"
+        >
+          <span className="ai-rocha-ping" aria-hidden="true" />
+          {open ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
+          {!open && (
+            <span className="absolute -top-1.5 -left-1.5 bg-background text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-primary/40 shadow-sm">
+              IA
+            </span>
+          )}
+        </button>
+      </div>
     </>
   );
 };
