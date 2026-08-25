@@ -102,5 +102,34 @@ export const useFlowchartSteps = (flowchartId: string) => {
     await nodeCrud.silentUpdate(b.id, { sort_order: a.sort_order });
   };
 
-  return { nodes, edges, isLoading, saving, incoming, saveStep, removeStep, moveStep };
+  /** Atualiza rota/rótulo de uma ligação entre etapas */
+  const updateEdge = async (
+    edgeId: string,
+    values: { label?: string | null; route_side?: string; lane_offset?: number },
+  ) => {
+    setSaving(true);
+    try {
+      return await edgeCrud.update(edgeId, values, "Ligação atualizada");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const removeEdge = async (edgeId: string) => {
+    await edgeCrud.remove(edgeId, "Ligação removida");
+  };
+
+  return {
+    nodes,
+    edges,
+    isLoading,
+    saving,
+    incoming,
+    saveStep,
+    removeStep,
+    moveStep,
+    updateEdge,
+    removeEdge,
+  };
 };
+
