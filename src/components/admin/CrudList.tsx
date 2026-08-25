@@ -262,6 +262,37 @@ const CrudList = ({
         />
       );
     }
+    if (field.type === "icon") {
+      const names = field.options ?? iconNames;
+      return (
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+          {names.map((name) => {
+            const Icon = iconMap[name];
+            if (!Icon) return null;
+            const active = value === name;
+            return (
+              <button
+                key={name}
+                type="button"
+                title={name}
+                onClick={() => setForm({ ...form, [field.name]: active ? "" : name })}
+                className={`flex flex-col items-center gap-1 rounded-lg border p-2 transition-colors ${
+                  active
+                    ? "bg-primary/15 text-primary border-primary/40"
+                    : "bg-secondary/40 text-muted-foreground border-border/40 hover:text-foreground"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-[10px] font-body truncate w-full text-center">
+                  {name}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
     if (field.type === "combo") {
       const listId = `combo-${field.name}`;
       return (
