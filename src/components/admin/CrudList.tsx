@@ -331,11 +331,15 @@ const CrudList = ({
             </button>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
-            {fields.map((field) => (
+            {fields
+              .filter((field) => (field.showIf ? field.showIf(form) : true))
+              .map((field) => (
               <div
                 key={field.name}
                 className={`space-y-2 ${
-                  field.type === "textarea" || field.type === "multiselect"
+                  field.type === "textarea" ||
+                  field.type === "multiselect" ||
+                  field.type === "code"
                     ? "md:col-span-2"
                     : ""
                 }`}
@@ -346,10 +350,17 @@ const CrudList = ({
                     field.type === "text" ||
                     field.type === "url" ||
                     field.type === "textarea" ||
+                    field.type === "code" ||
+                    field.type === "combo" ||
                     field.type === "tags";
                   if (!counted) return <Label>{field.label}</Label>;
                   const limit =
-                    field.maxLength ?? (field.type === "textarea" ? 2000 : 500);
+                    field.maxLength ??
+                    (field.type === "textarea"
+                      ? 2000
+                      : field.type === "code"
+                        ? 400000
+                        : 500);
                   return (
                     <LabelWithCount
                       label={field.label}
@@ -359,8 +370,9 @@ const CrudList = ({
                   );
                 })()}
                 {renderField(field)}
-
-
+                {field.hint && (
+                  <p className="text-xs text-muted-foreground font-body">{field.hint}</p>
+                )}
               </div>
             ))}
           </div>
