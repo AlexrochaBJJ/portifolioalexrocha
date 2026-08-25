@@ -25,7 +25,9 @@ interface Props {
   onEditNode?: (node: FlowNode) => void;
   onAddAfter?: (node: FlowNode) => void;
   onDeleteNode?: (node: FlowNode) => void;
+  onEditEdge?: (edge: FlowEdge) => void;
 }
+
 
 
 const typeLabel: Record<string, string> = {
