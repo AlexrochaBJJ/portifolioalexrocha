@@ -64,7 +64,9 @@ const FlowchartViewer = ({
   onEditNode,
   onAddAfter,
   onDeleteNode,
+  onEditEdge,
 }: Props) => {
+
 
   const [selected, setSelected] = useState<FlowNode | null>(null);
   const [heights, setHeights] = useState<Record<string, number>>({});
