@@ -1,7 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { prepareSandboxHtml } from "@/lib/htmlSandbox";
 import type { DashboardRow } from "@/hooks/useContent";
+
 
 interface DashboardViewerProps {
   dashboard: DashboardRow | null;
