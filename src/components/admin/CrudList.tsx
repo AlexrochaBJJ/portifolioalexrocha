@@ -374,6 +374,7 @@ const CrudList = ({
                 className={`space-y-2 ${
                   field.type === "textarea" ||
                   field.type === "multiselect" ||
+                  field.type === "icon" ||
                   field.type === "code"
                     ? "md:col-span-2"
                     : ""
