@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import CrudList from "./CrudList";
 import { useDashboards } from "@/hooks/useContent";
 import { useCrud } from "@/hooks/useCrud";
-import { iconNames } from "@/lib/icons";
+
 
 const DashboardsManager = () => {
   const { data, isLoading } = useDashboards(true);
@@ -61,7 +61,7 @@ const DashboardsManager = () => {
           showIf: (v) => v.source_type === "html",
         },
         { name: "description", label: "Descrição", type: "textarea", maxLength: 1500 },
-        { name: "icon", label: "Ícone", type: "select", options: iconNames },
+        { name: "icon", label: "Ícone", type: "icon" },
         { name: "sort_order", label: "Ordem", type: "number" },
         { name: "is_published", label: "Publicado", type: "switch" },
       ]}

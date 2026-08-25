@@ -1,7 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { prepareSandboxHtml } from "@/lib/htmlSandbox";
 import type { DashboardRow } from "@/hooks/useContent";
+
 
 interface DashboardViewerProps {
   dashboard: DashboardRow | null;
@@ -11,10 +13,15 @@ interface DashboardViewerProps {
 const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const isHtml = dashboard?.source_type === "html";
+  const sandboxedHtml = useMemo(
+    () => (isHtml ? prepareSandboxHtml(dashboard?.html_code) : ""),
+    [isHtml, dashboard?.html_code],
+  );
 
   useEffect(() => {
     if (dashboard) setIsLoading(true);
   }, [dashboard?.id]);
+
 
   return (
     <AnimatePresence>
@@ -92,10 +99,13 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
                 title={dashboard.title}
                 {...(isHtml
                   ? {
-                      srcDoc: dashboard.html_code ?? "",
-                      sandbox: "allow-scripts allow-popups allow-downloads allow-forms",
+                      srcDoc: sandboxedHtml,
+                      sandbox:
+                        "allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads allow-forms allow-modals",
+                      referrerPolicy: "no-referrer" as const,
                     }
                   : { src: dashboard.embed_url })}
+
                 className="w-full h-full bg-card"
                 allowFullScreen
                 onLoad={() => setIsLoading(false)}
