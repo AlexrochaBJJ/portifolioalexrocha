@@ -10,6 +10,7 @@ interface DashboardViewerProps {
 
 const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
   const [isLoading, setIsLoading] = useState(true);
+  const isHtml = dashboard?.source_type === "html";
 
   return (
     <AnimatePresence>
