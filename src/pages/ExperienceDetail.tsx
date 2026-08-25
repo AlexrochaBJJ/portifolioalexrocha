@@ -223,35 +223,55 @@ const ExperienceDetail = () => {
                 title="Destaques e impacto"
                 description="O que foi feito e no que resultou."
               >
+                <p className="inline-flex items-center gap-2 text-xs text-muted-foreground font-body mb-5">
+                  <span className="featured-chip px-2 py-1 rounded-md border text-[0.7rem]">
+                    Colorido
+                  </span>
+                  = maior destaque
+                </p>
                 <div className="space-y-5">
-                  {highlights.map((item) => (
-                    <div
-                      key={item.id}
-                      className="glass-card rounded-2xl p-6 md:p-8"
-                    >
-                      <p className="text-[0.7rem] uppercase tracking-widest text-primary/80 font-body mb-2">
-                        O que fiz
-                      </p>
-                      <p className="text-[0.975rem] text-foreground font-body leading-8 whitespace-pre-line">
-                        {item.highlight}
-                      </p>
-                      {item.impact && (
-                        <div className="mt-6 pt-6 border-t border-border/40">
-                          <p className="inline-flex items-center gap-1.5 text-[0.7rem] uppercase tracking-widest text-muted-foreground font-body mb-2">
-                            <TrendingUp className="w-3.5 h-3.5 text-primary" />
-                            Impacto
+                  {highlights.map((item) => {
+                    const featured = Boolean(
+                      (item as { is_featured?: boolean }).is_featured,
+                    );
+                    return (
+                      <div
+                        key={item.id}
+                        className={`glass-card rounded-2xl p-6 md:p-8 ${
+                          featured
+                            ? "border-primary/50 bg-primary/[0.06] shadow-[0_0_40px_-16px_hsl(var(--amber-glow)/0.5)]"
+                            : ""
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <p className="text-[0.7rem] uppercase tracking-widest text-primary/80 font-body">
+                            O que fiz
                           </p>
-                          <p className="text-[0.975rem] text-muted-foreground font-body leading-8 whitespace-pre-line">
-                            {item.impact}
-                          </p>
+                          {featured && (
+                            <span className="featured-chip px-2 py-0.5 rounded-md border text-[0.65rem] uppercase tracking-widest font-body">
+                              Maior destaque
+                            </span>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        <div className="rich-text rich-text-wide rich-text-strong">
+                          {item.highlight}
+                        </div>
+                        {item.impact && (
+                          <div className="mt-6 pt-6 border-t border-border/40">
+                            <p className="inline-flex items-center gap-1.5 text-[0.7rem] uppercase tracking-widest text-muted-foreground font-body mb-2">
+                              <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                              Impacto
+                            </p>
+                            <div className="rich-text rich-text-wide">{item.impact}</div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-
               </Section>
             )}
+
 
             {exp.tools.length > 0 && (
               <Section id="ferramentas" icon={Wrench} title="Ferramentas e sistemas">
