@@ -210,6 +210,7 @@ export type Database = {
           highlight: string
           id: string
           impact: string
+          is_featured: boolean
           sort_order: number
           updated_at: string
         }
@@ -219,6 +220,7 @@ export type Database = {
           highlight: string
           id?: string
           impact?: string
+          is_featured?: boolean
           sort_order?: number
           updated_at?: string
         }
@@ -228,6 +230,7 @@ export type Database = {
           highlight?: string
           id?: string
           impact?: string
+          is_featured?: boolean
           sort_order?: number
           updated_at?: string
         }
@@ -477,6 +480,7 @@ export type Database = {
           created_at: string
           icon: string | null
           id: string
+          is_featured: boolean
           name: string
           sort_order: number
           updated_at: string
@@ -486,6 +490,7 @@ export type Database = {
           created_at?: string
           icon?: string | null
           id?: string
+          is_featured?: boolean
           name: string
           sort_order?: number
           updated_at?: string
@@ -495,6 +500,7 @@ export type Database = {
           created_at?: string
           icon?: string | null
           id?: string
+          is_featured?: boolean
           name?: string
           sort_order?: number
           updated_at?: string

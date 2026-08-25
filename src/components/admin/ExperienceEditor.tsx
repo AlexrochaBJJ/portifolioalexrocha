@@ -177,7 +177,13 @@ const ExperienceEditor = ({ experience, onBack }: Props) => {
                 type: "textarea",
                 maxLength: 1000,
               },
+              {
+                name: "is_featured",
+                label: "Maior destaque (colorido)",
+                type: "switch",
+              },
               { name: "sort_order", label: "Ordem", type: "number" },
+
             ]}
             onCreate={(values) =>
               highlightCrud.insert({ ...values, experience_id: experience.id })

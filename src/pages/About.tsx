@@ -21,13 +21,16 @@ const About = () => {
   const { data: career } = useCareer();
   const { data: links } = useContactLinks();
 
-  const skillsByCategory = (skills ?? []).reduce<Record<string, string[]>>(
-    (acc, skill) => {
-      acc[skill.category] = [...(acc[skill.category] ?? []), skill.name];
-      return acc;
-    },
-    {},
-  );
+  const skillsByCategory = (skills ?? []).reduce<
+    Record<string, { name: string; featured: boolean }[]>
+  >((acc, skill) => {
+    acc[skill.category] = [
+      ...(acc[skill.category] ?? []),
+      { name: skill.name, featured: Boolean((skill as { is_featured?: boolean }).is_featured) },
+    ];
+    return acc;
+  }, {});
+
 
   return (
     <SiteLayout>
@@ -105,9 +108,7 @@ const About = () => {
             <h2 className="text-2xl md:text-3xl font-bold font-heading mb-6">
               Quem <span className="text-gradient-amber">sou eu</span>
             </h2>
-            <p className="text-muted-foreground leading-relaxed font-body whitespace-pre-line">
-              {about.bio}
-            </p>
+            <div className="rich-text">{about.bio}</div>
           </div>
         </section>
       )}
@@ -116,22 +117,37 @@ const About = () => {
       {Object.keys(skillsByCategory).length > 0 && (
         <section className="py-16 px-6 border-t border-border/30">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold font-heading mb-10">
-              Habilidades & <span className="text-gradient-amber">Ferramentas</span>
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {Object.entries(skillsByCategory).map(([category, names]) => (
-                <div key={category} className="glass-card rounded-xl p-5">
-                  <h3 className="text-sm font-semibold font-heading text-primary mb-4">
+            <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold font-heading">
+                Habilidades & <span className="text-gradient-amber">Ferramentas</span>
+              </h2>
+              <p className="inline-flex items-center gap-2 text-xs text-muted-foreground font-body">
+                <span className="featured-chip px-2 py-1 rounded-md border text-[0.7rem]">
+                  Exemplo
+                </span>
+                = maior destaque
+              </p>
+            </div>
+            <div className="space-y-5">
+              {Object.entries(skillsByCategory).map(([category, items]) => (
+                <div
+                  key={category}
+                  className="glass-card rounded-xl p-5 flex flex-col md:flex-row md:items-center gap-4"
+                >
+                  <h3 className="text-sm font-semibold font-heading text-primary md:w-48 md:shrink-0">
                     {category}
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {names.map((name) => (
+                    {items.map((skill) => (
                       <span
-                        key={name}
-                        className="px-2.5 py-1 text-xs rounded-md bg-secondary/60 text-muted-foreground border border-border/40 font-body"
+                        key={skill.name}
+                        className={`px-2.5 py-1 text-xs rounded-md border font-body ${
+                          skill.featured
+                            ? "featured-chip font-semibold"
+                            : "bg-secondary/60 text-muted-foreground border-border/40"
+                        }`}
                       >
-                        {name}
+                        {skill.name}
                       </span>
                     ))}
                   </div>
@@ -142,49 +158,6 @@ const About = () => {
         </section>
       )}
 
-      {/* Career */}
-      {career && career.length > 0 && (
-        <section className="py-16 px-6 border-t border-border/30">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold font-heading mb-10">
-              Trajetória <span className="text-gradient-amber">Profissional</span>
-            </h2>
-            <ol className="relative border-l border-border/60 pl-6 space-y-8">
-              {career.map((job) => (
-                <li key={job.id} className="relative">
-                  <span className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-primary" />
-                  <p className="text-xs text-muted-foreground font-body mb-1">{job.period}</p>
-                  <h3 className="font-heading font-semibold text-foreground">
-                    {job.role_title}
-                  </h3>
-                  <p className="text-sm text-primary font-body mb-2">
-                    {job.company}
-                    {job.location ? ` · ${job.location}` : ""}
-                  </p>
-                  {job.description && (
-                    <p className="text-sm text-muted-foreground font-body leading-relaxed">
-                      {job.description}
-                    </p>
-                  )}
-                  {job.highlights.length > 0 && (
-                    <ul className="mt-3 space-y-1">
-                      {job.highlights.map((h) => (
-                        <li
-                          key={h}
-                          className="text-sm text-muted-foreground font-body flex gap-2"
-                        >
-                          <span className="text-primary">•</span>
-                          {h}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-      )}
 
       {/* CTA */}
       <section className="py-16 px-6 border-t border-border/30">

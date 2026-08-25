@@ -16,8 +16,10 @@ const SkillsManager = () => {
       fields={[
         { name: "name", label: "Habilidade", required: true, maxLength: 100 },
         { name: "category", label: "Categoria", required: true, maxLength: 80 },
+        { name: "is_featured", label: "Maior destaque (colorida)", type: "switch" },
         { name: "sort_order", label: "Ordem", type: "number" },
       ]}
+
       onCreate={crud.insert}
       onUpdate={crud.update}
       onDelete={crud.remove}
