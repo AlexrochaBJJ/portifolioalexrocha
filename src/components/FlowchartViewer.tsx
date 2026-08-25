@@ -71,6 +71,19 @@ const FlowchartViewer = ({
   const [selected, setSelected] = useState<FlowNode | null>(null);
   const [heights, setHeights] = useState<Record<string, number>>({});
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const update = () => setContainerWidth(el.clientWidth);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
 
   const layout = useMemo(() => computeFlowLayout(nodes, edges), [nodes, edges]);
 
