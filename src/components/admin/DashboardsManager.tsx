@@ -55,7 +55,6 @@ const DashboardsManager = () => {
           name: "html_code",
           label: "Código HTML do dashboard",
           type: "code",
-          maxLength: 400000,
           placeholder: "<!DOCTYPE html> ...",
           hint: "Cole o código completo do dashboard (HTML, CSS e scripts). Ele roda isolado dentro do portfólio.",
           showIf: (v) => v.source_type === "html",

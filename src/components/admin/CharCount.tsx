@@ -2,19 +2,21 @@ import { Label } from "@/components/ui/label";
 
 interface Props {
   value: string;
-  max: number;
+  /** Quando omitido/nulo, exibe apenas a contagem (sem limite). */
+  max?: number | null;
 }
 
 /** Contador de caracteres no formato "115/400". */
 export const CharCount = ({ value, max }: Props) => {
   const used = String(value ?? "").length;
+  const hasMax = typeof max === "number";
   return (
     <span
       className={`text-xs font-body tabular-nums ${
-        used >= max ? "text-destructive" : "text-muted-foreground"
+        hasMax && used >= (max as number) ? "text-destructive" : "text-muted-foreground"
       }`}
     >
-      {used}/{max}
+      {hasMax ? `${used}/${max}` : `${used} caracteres`}
     </span>
   );
 };

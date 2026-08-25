@@ -255,7 +255,7 @@ const CrudList = ({
           rows={14}
           spellCheck={false}
           value={value ?? ""}
-          maxLength={field.maxLength ?? 400000}
+          {...(field.maxLength ? { maxLength: field.maxLength } : {})}
           placeholder={field.placeholder}
           className="font-mono text-xs"
           onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
@@ -392,10 +392,10 @@ const CrudList = ({
                   if (!counted) return <Label>{field.label}</Label>;
                   const limit =
                     field.maxLength ??
-                    (field.type === "textarea"
-                      ? 2000
-                      : field.type === "code"
-                        ? 400000
+                    (field.type === "code"
+                      ? null
+                      : field.type === "textarea"
+                        ? 2000
                         : 500);
                   return (
                     <LabelWithCount
