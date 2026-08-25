@@ -129,6 +129,11 @@ const CrudList = ({
     const payload: Row = {};
     for (const field of fields) {
       const value = form[field.name];
+      const hidden = field.showIf ? !field.showIf(form) : false;
+      if (hidden && field.type !== "switch" && field.type !== "number") {
+        payload[field.name] = field.required ? "" : null;
+        continue;
+      }
       if (field.type === "tags") {
         payload[field.name] = String(value ?? "")
           .split(",")
