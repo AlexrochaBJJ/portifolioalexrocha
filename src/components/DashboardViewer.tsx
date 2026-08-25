@@ -45,15 +45,17 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
               </h2>
             </div>
             <div className="flex items-center gap-3">
-              <a
-                href={dashboard.embed_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-body"
-              >
-                <ExternalLink className="w-4 h-4" />
-                <span className="hidden sm:inline">Abrir no Power BI</span>
-              </a>
+              {!isHtml && (
+                <a
+                  href={dashboard.embed_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-body"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="hidden sm:inline">Abrir no Power BI</span>
+                </a>
+              )}
               <button
                 onClick={onClose}
                 className="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
