@@ -35,6 +35,7 @@ export interface FieldDef {
   type?:
     | "text"
     | "textarea"
+    | "richtext"
     | "number"
     | "tags"
     | "switch"
