@@ -21,13 +21,16 @@ const About = () => {
   const { data: career } = useCareer();
   const { data: links } = useContactLinks();
 
-  const skillsByCategory = (skills ?? []).reduce<Record<string, string[]>>(
-    (acc, skill) => {
-      acc[skill.category] = [...(acc[skill.category] ?? []), skill.name];
-      return acc;
-    },
-    {},
-  );
+  const skillsByCategory = (skills ?? []).reduce<
+    Record<string, { name: string; featured: boolean }[]>
+  >((acc, skill) => {
+    acc[skill.category] = [
+      ...(acc[skill.category] ?? []),
+      { name: skill.name, featured: Boolean((skill as { is_featured?: boolean }).is_featured) },
+    ];
+    return acc;
+  }, {});
+
 
   return (
     <SiteLayout>
