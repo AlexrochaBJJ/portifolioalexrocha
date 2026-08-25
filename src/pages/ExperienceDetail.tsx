@@ -172,7 +172,7 @@ const ExperienceDetail = () => {
                 icon={FileText}
                 title="Sobre a atuação"
               >
-                <div className="max-w-3xl space-y-4 text-[0.975rem] text-muted-foreground font-body leading-8">
+                <div className="rich-text">
                   {description
                     .split(/\n\s*\n|\n/)
                     .map((p) => p.trim())
@@ -181,6 +181,7 @@ const ExperienceDetail = () => {
                       <p key={i}>{paragraph}</p>
                     ))}
                 </div>
+
               </Section>
             )}
 
