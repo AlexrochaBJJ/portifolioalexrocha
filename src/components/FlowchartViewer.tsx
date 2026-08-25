@@ -482,7 +482,9 @@ const FlowchartViewer = ({
               );
             })}
           </div>
+          </div>
         </div>
+
         <p className="mt-3 px-1 text-[11px] text-muted-foreground font-body inline-flex items-center gap-1.5">
           <CornerUpLeft className="w-3 h-3 text-accent" />
           setas tracejadas indicam retorno a uma etapa anterior
