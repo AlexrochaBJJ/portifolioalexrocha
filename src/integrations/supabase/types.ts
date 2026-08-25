@@ -289,6 +289,8 @@ export type Database = {
           flowchart_id: string
           id: string
           label: string | null
+          lane_offset: number
+          route_side: string
           source_node_id: string
           target_node_id: string
         }
@@ -297,6 +299,8 @@ export type Database = {
           flowchart_id: string
           id?: string
           label?: string | null
+          lane_offset?: number
+          route_side?: string
           source_node_id: string
           target_node_id: string
         }
@@ -305,6 +309,8 @@ export type Database = {
           flowchart_id?: string
           id?: string
           label?: string | null
+          lane_offset?: number
+          route_side?: string
           source_node_id?: string
           target_node_id?: string
         }

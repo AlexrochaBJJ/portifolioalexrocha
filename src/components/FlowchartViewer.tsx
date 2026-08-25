@@ -25,7 +25,9 @@ interface Props {
   onEditNode?: (node: FlowNode) => void;
   onAddAfter?: (node: FlowNode) => void;
   onDeleteNode?: (node: FlowNode) => void;
+  onEditEdge?: (edge: FlowEdge) => void;
 }
+
 
 
 const typeLabel: Record<string, string> = {
@@ -62,7 +64,9 @@ const FlowchartViewer = ({
   onEditNode,
   onAddAfter,
   onDeleteNode,
+  onEditEdge,
 }: Props) => {
+
 
   const [selected, setSelected] = useState<FlowNode | null>(null);
   const [heights, setHeights] = useState<Record<string, number>>({});
@@ -103,6 +107,16 @@ const FlowchartViewer = ({
     return () => window.removeEventListener("resize", measure);
   }, [measure]);
 
+  const LANE_GAP = 20;
+
+  // espaço reservado à esquerda para as linhas roteadas manualmente por lá
+  const leftPad = useMemo(() => {
+    const leftCount = edges.filter(
+      (e) => (e as FlowEdge).route_side === "left",
+    ).length;
+    return leftCount > 0 ? 30 + leftCount * LANE_GAP : 0;
+  }, [edges]);
+
   // geometry: x from layout (normalized), y stacked using measured heights
   const geometry = useMemo(() => {
     const xs = nodes.map((n) => layout.positions[n.id]?.x ?? 0);
@@ -115,7 +129,7 @@ const FlowchartViewer = ({
       );
       ids.forEach((id) => {
         boxes[id] = {
-          x: (layout.positions[id]?.x ?? 0) - minX + 8,
+          x: (layout.positions[id]?.x ?? 0) - minX + 8 + leftPad,
           y,
           w: NODE_W,
           h: heights[id] ?? layout.sizes[id]?.height ?? 72,
@@ -125,17 +139,18 @@ const FlowchartViewer = ({
     });
     const width = Math.max(
       ...Object.values(boxes).map((b) => b.x + b.w),
-      NODE_W + 16,
+      NODE_W + 16 + leftPad,
     ) + 8;
     const height = Math.max(y - V_GAP + 16, 120);
     return { boxes, width, height };
-  }, [nodes, levels, layout, heights]);
+  }, [nodes, levels, layout, heights, leftPad]);
 
   // rotas: arestas que pulam níveis (ou voltam) saem pela laterais, nunca por
-  // dentro dos cards
+  // dentro dos cards. route_side/lane_offset permitem ajuste manual.
   const routing = useMemo(() => {
     const out: {
       key: string;
+      edge: FlowEdge;
       d: string;
       label?: string | null;
       lx?: number;
@@ -145,14 +160,17 @@ const FlowchartViewer = ({
 
     const rightEdge = Math.max(
       ...Object.values(geometry.boxes).map((b) => b.x + b.w),
-      NODE_W + 8,
+      NODE_W + 8 + leftPad,
     );
-    const LANE_GAP = 20;
     let laneCount = 0;
+    let leftLaneCount = 0;
     const nextLane = () => rightEdge + 26 + laneCount++ * LANE_GAP;
+    const nextLeftLane = () => Math.max(leftPad - 10 - leftLaneCount++ * LANE_GAP, 6);
 
     // primeiro as arestas que precisam de canaleta, para reservar as faixas
     const needsLane = (e: FlowEdge) => {
+      if (e.route_side === "direct") return false;
+      if (e.route_side === "left" || e.route_side === "right") return true;
       const key = `${e.source_node_id}->${e.target_node_id}`;
       if (layout.backEdges.has(key)) return true;
       const rs = rankOf[e.source_node_id];
@@ -170,39 +188,73 @@ const FlowchartViewer = ({
       if (!a || !b) return;
       const key = `${e.source_node_id}->${e.target_node_id}`;
       const back = layout.backEdges.has(key);
+      const side = e.route_side ?? "auto";
+      const off = e.lane_offset ?? 0;
       const sx = a.x + a.w / 2;
       const sy = a.y + a.h;
       const tx = b.x + b.w / 2;
       const ty = b.y;
 
-      if (back) {
-        const lane = nextLane();
-        const d = `M ${a.x + a.w} ${a.y + a.h / 2} H ${lane} V ${b.y + b.h / 2} H ${b.x + b.w}`;
-        out.push({ key, d, label: e.label, lx: lane + 6, ly: (a.y + b.y) / 2, back });
+      if (side === "left") {
+        const lane = nextLeftLane() - off;
+        const d = `M ${a.x} ${a.y + a.h / 2} H ${lane} V ${b.y + b.h / 2} H ${b.x}`;
+        out.push({
+          key,
+          edge: e,
+          d,
+          label: e.label,
+          lx: lane - 4,
+          ly: (a.y + b.y) / 2,
+          back,
+        });
         return;
       }
 
-      if (needsLane(e)) {
+      if (side === "right" || (side === "auto" && back)) {
+        const lane = nextLane() + off;
+        const d = `M ${a.x + a.w} ${a.y + a.h / 2} H ${lane} V ${b.y + b.h / 2} H ${b.x + b.w}`;
+        out.push({
+          key,
+          edge: e,
+          d,
+          label: e.label,
+          lx: lane + 6,
+          ly: (a.y + b.y) / 2,
+          back,
+        });
+        return;
+      }
+
+      if (side === "auto" && needsLane(e)) {
         // desvia pela lateral direita para não cortar os cards intermediários
-        const lane = nextLane();
+        const lane = nextLane() + off;
         const drop = Math.min(24, V_GAP / 2);
         const d = `M ${sx} ${sy} V ${sy + drop} H ${lane} V ${ty - drop} H ${tx} V ${ty}`;
-        out.push({ key, d, label: e.label, lx: lane + 6, ly: (sy + ty) / 2, back: false });
+        out.push({
+          key,
+          edge: e,
+          d,
+          label: e.label,
+          lx: lane + 6,
+          ly: (sy + ty) / 2,
+          back: false,
+        });
         return;
       }
 
-      const mid = sy + Math.max((ty - sy) / 2, 16);
+      const mid = sy + Math.max((ty - sy) / 2, 16) + off;
       const d =
         Math.abs(sx - tx) < 2
           ? `M ${sx} ${sy} V ${ty}`
           : `M ${sx} ${sy} V ${mid} H ${tx} V ${ty}`;
       out.push({
         key,
+        edge: e,
         d,
         label: e.label,
         lx: Math.abs(sx - tx) < 2 ? sx + 6 : (sx + tx) / 2,
         ly: mid - 6,
-        back,
+        back: side === "direct" ? false : back,
       });
     });
 
@@ -211,7 +263,8 @@ const FlowchartViewer = ({
       laneCount > 0 ? rightEdge + 26 + (laneCount - 1) * LANE_GAP + 60 : 0,
     );
     return { paths: out, width };
-  }, [edges, geometry, layout.backEdges, rankOf]);
+  }, [edges, geometry, layout.backEdges, rankOf, leftPad]);
+
 
   const paths = routing.paths;
   const canvasWidth = routing.width;
@@ -293,6 +346,16 @@ const FlowchartViewer = ({
                     strokeDasharray={p.back ? "5 4" : undefined}
                     markerEnd={p.back ? "url(#flow-arrow-back)" : "url(#flow-arrow)"}
                   />
+                  {editable && onEditEdge && (
+                    <path
+                      d={p.d}
+                      fill="none"
+                      stroke="transparent"
+                      strokeWidth={14}
+                      style={{ pointerEvents: "stroke", cursor: "pointer" }}
+                      onClick={() => onEditEdge(p.edge)}
+                    />
+                  )}
                   {p.label && (
                     <text
                       x={p.lx}
@@ -307,6 +370,7 @@ const FlowchartViewer = ({
                   )}
                 </g>
               ))}
+
             </svg>
 
             {nodes.map((node) => {
