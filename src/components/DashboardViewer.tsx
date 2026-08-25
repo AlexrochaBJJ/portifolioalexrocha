@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { DashboardRow } from "@/hooks/useContent";
 
 interface DashboardViewerProps {
@@ -10,6 +10,11 @@ interface DashboardViewerProps {
 
 const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
   const [isLoading, setIsLoading] = useState(true);
+  const isHtml = dashboard?.source_type === "html";
+
+  useEffect(() => {
+    if (dashboard) setIsLoading(true);
+  }, [dashboard?.id]);
 
   return (
     <AnimatePresence>
@@ -45,15 +50,17 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
               </h2>
             </div>
             <div className="flex items-center gap-3">
-              <a
-                href={dashboard.embed_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-body"
-              >
-                <ExternalLink className="w-4 h-4" />
-                <span className="hidden sm:inline">Abrir no Power BI</span>
-              </a>
+              {!isHtml && (
+                <a
+                  href={dashboard.embed_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors font-body"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="hidden sm:inline">Abrir no Power BI</span>
+                </a>
+              )}
               <button
                 onClick={onClose}
                 className="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
@@ -81,9 +88,15 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
                 </div>
               )}
               <iframe
+                key={dashboard.id}
                 title={dashboard.title}
-                src={dashboard.embed_url}
-                className="w-full h-full"
+                {...(isHtml
+                  ? {
+                      srcDoc: dashboard.html_code ?? "",
+                      sandbox: "allow-scripts allow-popups allow-downloads allow-forms",
+                    }
+                  : { src: dashboard.embed_url })}
+                className="w-full h-full bg-card"
                 allowFullScreen
                 onLoad={() => setIsLoading(false)}
                 style={{ minHeight: "400px", border: 0 }}

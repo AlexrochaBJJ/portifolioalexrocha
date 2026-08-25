@@ -125,10 +125,12 @@ export type Database = {
           created_at: string
           description: string
           embed_url: string
+          html_code: string | null
           icon: string
           id: string
           is_published: boolean
           sort_order: number
+          source_type: string
           title: string
           updated_at: string
         }
@@ -136,11 +138,13 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string
-          embed_url: string
+          embed_url?: string
+          html_code?: string | null
           icon?: string
           id?: string
           is_published?: boolean
           sort_order?: number
+          source_type?: string
           title: string
           updated_at?: string
         }
@@ -149,10 +153,12 @@ export type Database = {
           created_at?: string
           description?: string
           embed_url?: string
+          html_code?: string | null
           icon?: string
           id?: string
           is_published?: boolean
           sort_order?: number
+          source_type?: string
           title?: string
           updated_at?: string
         }
