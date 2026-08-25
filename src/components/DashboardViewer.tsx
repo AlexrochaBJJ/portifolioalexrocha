@@ -12,6 +12,10 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const isHtml = dashboard?.source_type === "html";
 
+  useEffect(() => {
+    if (dashboard) setIsLoading(true);
+  }, [dashboard?.id]);
+
   return (
     <AnimatePresence>
       {dashboard && (
