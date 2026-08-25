@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import CrudList from "./CrudList";
 import { useDashboards } from "@/hooks/useContent";
 import { useCrud } from "@/hooks/useCrud";
-import { iconNames } from "@/lib/icons";
+
 
 const DashboardsManager = () => {
   const { data, isLoading } = useDashboards(true);
