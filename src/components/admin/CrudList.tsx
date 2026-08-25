@@ -38,12 +38,16 @@ export interface FieldDef {
     | "switch"
     | "select"
     | "multiselect"
+    | "combo"
+    | "code"
     | "url";
   options?: string[];
   choices?: { label: string; value: string }[];
   required?: boolean;
   maxLength?: number;
   placeholder?: string;
+  hint?: string;
+  showIf?: (values: Record<string, unknown>) => boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
