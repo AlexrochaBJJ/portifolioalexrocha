@@ -122,4 +122,36 @@
     background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent);
     height: 1px;
   }
+
+  /* Formatação padrão para textos longos cadastrados pelo admin */
+  .rich-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.975rem;
+    line-height: 2;
+    color: hsl(var(--muted-foreground));
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+    max-width: 68ch;
+  }
+
+  .rich-text > * + * {
+    margin-top: 1rem;
+  }
+
+  .rich-text-wide {
+    max-width: none;
+  }
+
+  .rich-text-strong {
+    color: hsl(var(--foreground));
+  }
+
+  .featured-chip {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.22), hsl(var(--amber-glow) / 0.12));
+    border-color: hsl(var(--primary) / 0.55) !important;
+    color: hsl(var(--primary));
+    box-shadow: 0 0 18px -6px hsl(var(--amber-glow) / 0.45);
+  }
 }
+
