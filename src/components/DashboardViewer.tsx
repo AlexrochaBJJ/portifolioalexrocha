@@ -84,9 +84,15 @@ const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
                 </div>
               )}
               <iframe
+                key={dashboard.id}
                 title={dashboard.title}
-                src={dashboard.embed_url}
-                className="w-full h-full"
+                {...(isHtml
+                  ? {
+                      srcDoc: dashboard.html_code ?? "",
+                      sandbox: "allow-scripts allow-popups allow-downloads allow-forms",
+                    }
+                  : { src: dashboard.embed_url })}
+                className="w-full h-full bg-card"
                 allowFullScreen
                 onLoad={() => setIsLoading(false)}
                 style={{ minHeight: "400px", border: 0 }}
