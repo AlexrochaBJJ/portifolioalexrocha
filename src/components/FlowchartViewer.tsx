@@ -346,6 +346,16 @@ const FlowchartViewer = ({
                     strokeDasharray={p.back ? "5 4" : undefined}
                     markerEnd={p.back ? "url(#flow-arrow-back)" : "url(#flow-arrow)"}
                   />
+                  {editable && onEditEdge && (
+                    <path
+                      d={p.d}
+                      fill="none"
+                      stroke="transparent"
+                      strokeWidth={14}
+                      style={{ pointerEvents: "stroke", cursor: "pointer" }}
+                      onClick={() => onEditEdge(p.edge)}
+                    />
+                  )}
                   {p.label && (
                     <text
                       x={p.lx}
@@ -360,6 +370,7 @@ const FlowchartViewer = ({
                   )}
                 </g>
               ))}
+
             </svg>
 
             {nodes.map((node) => {
