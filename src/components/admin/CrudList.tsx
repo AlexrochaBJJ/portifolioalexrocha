@@ -245,6 +245,56 @@ const CrudList = ({
         </Select>
       );
     }
+    if (field.type === "code") {
+      return (
+        <Textarea
+          rows={14}
+          spellCheck={false}
+          value={value ?? ""}
+          maxLength={field.maxLength ?? 400000}
+          placeholder={field.placeholder}
+          className="font-mono text-xs"
+          onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+        />
+      );
+    }
+    if (field.type === "combo") {
+      const listId = `combo-${field.name}`;
+      return (
+        <>
+          <Input
+            list={listId}
+            value={value ?? ""}
+            maxLength={field.maxLength ?? 60}
+            placeholder={field.placeholder ?? "Digite ou escolha"}
+            onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+          />
+          <datalist id={listId}>
+            {(field.options ?? []).map((opt) => (
+              <option key={opt} value={opt} />
+            ))}
+          </datalist>
+          {(field.options ?? []).length > 0 && (
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {(field.options ?? []).map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setForm({ ...form, [field.name]: opt })}
+                  className={`px-2.5 py-1 rounded-full text-xs font-body border transition-colors ${
+                    value === opt
+                      ? "bg-primary/15 text-primary border-primary/40"
+                      : "bg-secondary/50 text-muted-foreground border-border/40 hover:text-foreground"
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
+      );
+    }
     return (
       <Input
         type={field.type === "number" ? "number" : "text"}
