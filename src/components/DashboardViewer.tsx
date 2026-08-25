@@ -13,10 +13,15 @@ interface DashboardViewerProps {
 const DashboardViewer = ({ dashboard, onClose }: DashboardViewerProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const isHtml = dashboard?.source_type === "html";
+  const sandboxedHtml = useMemo(
+    () => (isHtml ? prepareSandboxHtml(dashboard?.html_code) : ""),
+    [isHtml, dashboard?.html_code],
+  );
 
   useEffect(() => {
     if (dashboard) setIsLoading(true);
   }, [dashboard?.id]);
+
 
   return (
     <AnimatePresence>
