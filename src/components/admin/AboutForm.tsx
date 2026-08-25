@@ -52,7 +52,7 @@ const AboutForm = () => {
   if (isLoading) return <p className="text-sm text-muted-foreground">Carregando...</p>;
 
   return (
-    <div className="space-y-5 max-w-2xl">
+    <div className="space-y-5 max-w-4xl">
       <div className="space-y-2">
         <LabelWithCount htmlFor="full_name" label="Nome completo" value={form.full_name} max={120} />
         <Input
