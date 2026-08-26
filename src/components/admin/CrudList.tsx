@@ -307,7 +307,58 @@ const CrudList = ({
       );
     }
 
+    if (field.type === "image") {
+      return (
+        <div className="space-y-3">
+          {value ? (
+            <div className="relative w-full max-w-sm overflow-hidden rounded-lg border border-border/50">
+              <img src={value} alt="Capa selecionada" className="w-full aspect-[16/10] object-cover" />
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="absolute top-2 right-2"
+                onClick={() => setForm({ ...form, [field.name]: "" })}
+              >
+                <X className="w-3.5 h-3.5 mr-1" />
+                Remover
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground font-body">
+              <ImageIcon className="w-4 h-4" />
+              Nenhuma capa enviada
+            </div>
+          )}
+          <Input
+            type="file"
+            accept="image/*"
+            disabled={uploadingField === field.name}
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (!file) return;
+              setUploadingField(field.name);
+              try {
+                const url = await uploadCover(file);
+                setForm((prev) => ({ ...prev, [field.name]: url }));
+                toast.success("Capa enviada");
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Falha no upload");
+              } finally {
+                setUploadingField(null);
+              }
+            }}
+          />
+          {uploadingField === field.name && (
+            <p className="text-xs text-muted-foreground font-body">Enviando imagem...</p>
+          )}
+        </div>
+      );
+    }
+
     if (field.type === "combo") {
+
       const listId = `combo-${field.name}`;
       return (
         <>
