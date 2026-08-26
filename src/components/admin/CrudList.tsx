@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Plus, Trash2, Pencil, X } from "lucide-react";
+import { Plus, Trash2, Pencil, X, Image as ImageIcon } from "lucide-react";
+import { uploadCover } from "@/lib/uploadCover";
+
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
