@@ -16,6 +16,7 @@ import ExperienceDetail from "./pages/ExperienceDetail";
 import FlowchartDetail from "./pages/FlowchartDetail";
 import Assistant from "./pages/Assistant";
 import AdminLogin from "./pages/AdminLogin";
+import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/fluxogramas/:slug" element={<FlowchartDetail />} />
             <Route path="/assistente" element={<Assistant />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
