@@ -98,6 +98,8 @@ const CrudList = ({
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<Row>({});
   const [saving, setSaving] = useState(false);
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
+
 
   const startCreate = () => {
     const blank: Row = {};
