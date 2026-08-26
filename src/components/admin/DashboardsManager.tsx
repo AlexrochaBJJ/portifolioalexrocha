@@ -60,7 +60,14 @@ const DashboardsManager = () => {
           showIf: (v) => v.source_type === "html",
         },
         { name: "description", label: "Descrição", type: "textarea", maxLength: 1500 },
+        {
+          name: "cover_url",
+          label: "Imagem de capa",
+          type: "image",
+          hint: "Envie uma foto para servir como capa do dashboard.",
+        },
         { name: "icon", label: "Ícone", type: "icon" },
+
         { name: "sort_order", label: "Ordem", type: "number" },
         { name: "is_published", label: "Publicado", type: "switch" },
       ]}

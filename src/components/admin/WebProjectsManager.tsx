@@ -20,9 +20,11 @@ const WebProjectsManager = () => {
         { name: "description", label: "Descrição", type: "textarea", maxLength: 1000 },
         {
           name: "preview_url",
-          label: "URL da imagem de preview (opcional)",
-          maxLength: 500,
+          label: "Imagem de capa",
+          type: "image",
+          hint: "Envie uma foto para servir como capa do projeto.",
         },
+
         { name: "tags", label: "Tags (separadas por vírgula)", type: "tags" },
         { name: "sort_order", label: "Ordem", type: "number" },
         { name: "is_published", label: "Publicado", type: "switch" },

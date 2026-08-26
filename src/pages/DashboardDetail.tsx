@@ -60,7 +60,18 @@ const DashboardDetail = () => {
                 </div>
               </header>
 
+              {dashboard.cover_url && (
+                <div className="overflow-hidden rounded-2xl border border-border/50">
+                  <img
+                    src={dashboard.cover_url}
+                    alt={`Capa do dashboard ${dashboard.title}`}
+                    className="w-full object-cover"
+                  />
+                </div>
+              )}
+
               <div className="line-gradient" />
+
 
               <div className="glass-card rounded-2xl p-6 space-y-4">
                 <h2 className="text-lg font-semibold font-heading">Sobre este dashboard</h2>
