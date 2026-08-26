@@ -45,7 +45,9 @@ export interface FieldDef {
     | "combo"
     | "code"
     | "icon"
+    | "image"
     | "url";
+
   options?: string[];
   choices?: { label: string; value: string }[];
   required?: boolean;
