@@ -22,14 +22,25 @@ const DashboardCard = ({ dashboard, index }: DashboardCardProps) => {
     >
       <Link to={`/dashboards/${dashboard.id}`} className="block">
         <div className="relative aspect-[16/10] overflow-hidden flex items-center justify-center bg-gradient-to-br from-primary/10 via-transparent to-accent/5">
+          {dashboard.cover_url ? (
+            <img
+              src={dashboard.cover_url}
+              alt={`Capa do dashboard ${dashboard.title}`}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : null}
           <div className="absolute inset-0 dot-pattern opacity-20" />
           <div className="absolute inset-0 bg-gradient-to-t from-card/60 via-transparent to-transparent" />
 
-          <div className="relative z-10 flex flex-col items-center gap-3">
-            <div className="w-20 h-20 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/25 transition-all duration-500">
-              <Icon className="w-10 h-10 text-primary" />
+          {!dashboard.cover_url && (
+            <div className="relative z-10 flex flex-col items-center gap-3">
+              <div className="w-20 h-20 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/25 transition-all duration-500">
+                <Icon className="w-10 h-10 text-primary" />
+              </div>
             </div>
-          </div>
+          )}
+
 
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 z-20">
             <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-heading font-medium text-sm shadow-lg">
