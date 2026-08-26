@@ -119,13 +119,12 @@ const AdminLogin = () => {
               variant="ghost"
               className="w-full"
               disabled={submitting}
-              onClick={handleSignUp}
+              onClick={handleForgotPassword}
             >
-              Primeiro acesso: criar conta de administrador
+              Esqueci minha senha
             </Button>
             <p className="text-xs text-muted-foreground/70 font-body">
-              A criação de administrador funciona apenas no primeiro acesso, enquanto
-              nenhum administrador existir.
+              Acesso restrito ao administrador do portfólio.
             </p>
           </form>
 
