@@ -49,32 +49,29 @@ const AdminLogin = () => {
     navigate("/admin", { replace: true });
   };
 
-  const handleSignUp = async () => {
-    const parsed = schema.safeParse({ email, password });
+  const handleForgotPassword = async () => {
+    const parsed = z
+      .string()
+      .trim()
+      .email({ message: "Informe um e-mail válido" })
+      .max(255)
+      .safeParse(email);
     if (!parsed.success) {
       toast.error(parsed.error.issues[0].message);
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.auth.signUp({
-      email: parsed.data.email,
-      password: parsed.data.password,
-      options: { emailRedirectTo: `${window.location.origin}/admin/login` },
+    const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
+      redirectTo: `${window.location.origin}/reset-password`,
     });
+    setSubmitting(false);
     if (error) {
-      setSubmitting(false);
-      toast.error(error.message);
+      toast.error("Não foi possível enviar o e-mail de recuperação.");
       return;
     }
-    const { data: claimed } = await supabase.rpc("claim_admin");
-    setSubmitting(false);
-    if (claimed) {
-      toast.success("Conta de administrador criada!");
-      navigate("/admin", { replace: true });
-    } else {
-      toast.info("Conta criada. Confirme o e-mail e faça login.");
-    }
+    toast.success("Enviamos um link de recuperação para o seu e-mail.");
   };
+
 
 
   return (
