@@ -17,7 +17,7 @@ const WebProjectsManager = () => {
         { name: "title", label: "Título", required: true, maxLength: 150 },
         { name: "category", label: "Categoria", required: true, maxLength: 60 },
         { name: "url", label: "URL do projeto", required: true, maxLength: 500 },
-        { name: "description", label: "Descrição", type: "textarea", maxLength: 1000 },
+        { name: "description", label: "Descrição", type: "textarea" },
         {
           name: "preview_url",
           label: "Imagem de capa",
