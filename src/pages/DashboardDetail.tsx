@@ -70,8 +70,22 @@ const DashboardDetail = () => {
                 </div>
               )}
 
-              <div className="line-gradient" />
+              <div className="flex flex-wrap gap-3">
+                <Button onClick={() => setViewing(true)} size="lg">
+                  <Maximize2 className="w-4 h-4 mr-2" />
+                  Abrir dashboard
+                </Button>
+                {dashboard.source_type !== "html" && dashboard.embed_url && (
+                  <Button variant="outline" size="lg" asChild>
+                    <a href={dashboard.embed_url} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Abrir no Power BI
+                    </a>
+                  </Button>
+                )}
+              </div>
 
+              <div className="line-gradient" />
 
               <div className="glass-card rounded-2xl p-6 space-y-4">
                 <h2 className="text-lg font-semibold font-heading">Sobre este dashboard</h2>
