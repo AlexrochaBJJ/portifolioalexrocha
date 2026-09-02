@@ -402,9 +402,9 @@ const CrudList = ({
     }
     return (
       <Input
-        type={field.type === "number" ? "number" : "text"}
-        value={value ?? ""}
-        maxLength={field.maxLength ?? 500}
+        type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
+        value={(value as string) ?? ""}
+        maxLength={field.type === "date" ? undefined : field.maxLength ?? 500}
         placeholder={field.placeholder}
         onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
       />
