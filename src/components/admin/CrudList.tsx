@@ -48,6 +48,7 @@ export interface FieldDef {
     | "code"
     | "icon"
     | "image"
+    | "date"
     | "url";
 
   options?: string[];
