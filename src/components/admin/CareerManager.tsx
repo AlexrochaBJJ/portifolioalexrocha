@@ -12,6 +12,26 @@ import {
 import { useCrud } from "@/hooks/useCrud";
 import { slugify } from "@/lib/slug";
 
+/** "2022-03-01" -> "mar. 2022" */
+const monthLabel = (value?: unknown) => {
+  const raw = typeof value === "string" ? value.trim() : "";
+  if (!raw) return "";
+  const [y, m] = raw.split("-");
+  const date = new Date(Number(y), Number(m ?? 1) - 1, 1);
+  if (Number.isNaN(date.getTime())) return raw;
+  return date
+    .toLocaleDateString("pt-BR", { month: "short", year: "numeric" })
+    .replace(".", "");
+};
+
+/** Texto do período gerado a partir das datas escolhidas no calendário. */
+const buildPeriod = (values: Record<string, unknown>) => {
+  const start = monthLabel(values.start_date);
+  const end = values.is_current ? "Atual" : monthLabel(values.end_date);
+  if (!start) return end || "";
+  return end ? `${start} — ${end}` : start;
+};
+
 const CareerManager = () => {
   const { data, isLoading } = useCareer(true);
   const { data: dashboards } = useDashboards(true);
