@@ -172,7 +172,7 @@ const FloatingAiChat = () => {
                   <div className="flex items-start gap-2 text-foreground">
                     <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                     <p>
-                      Oi! Sou a <strong className="text-primary">Rocha</strong>, a IA deste portfólio. Pergunte sobre trajetória, resultados e processos.
+                      Oi! Sou a <strong className="text-primary">Malu</strong>, assistente de IA deste portfólio. Falo direto com RH e recrutadores: posso resumir o perfil, comparar a experiência com uma vaga, detalhar resultados e processos e gerar um relatório completo em Word.
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
