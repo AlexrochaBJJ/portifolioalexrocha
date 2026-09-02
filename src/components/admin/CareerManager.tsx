@@ -46,7 +46,18 @@ const CareerManager = () => {
       fields={[
         { name: "role_title", label: "Cargo", required: true, maxLength: 120 },
         { name: "company", label: "Empresa", required: true, maxLength: 120 },
-        { name: "period", label: "Período", required: true, placeholder: "2022 — Atual" },
+        { name: "start_date", label: "Data de início", type: "date", required: true },
+        {
+          name: "is_current",
+          label: "Trabalho atual (sem data de término)",
+          type: "switch",
+        },
+        {
+          name: "end_date",
+          label: "Data de término",
+          type: "date",
+          showIf: (v) => !v.is_current,
+        },
         { name: "location", label: "Local", maxLength: 120 },
         { name: "sector", label: "Setor / área", maxLength: 120 },
         {
