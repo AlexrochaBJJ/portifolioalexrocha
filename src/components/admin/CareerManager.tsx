@@ -12,6 +12,26 @@ import {
 import { useCrud } from "@/hooks/useCrud";
 import { slugify } from "@/lib/slug";
 
+/** "2022-03-01" -> "mar. 2022" */
+const monthLabel = (value?: unknown) => {
+  const raw = typeof value === "string" ? value.trim() : "";
+  if (!raw) return "";
+  const [y, m] = raw.split("-");
+  const date = new Date(Number(y), Number(m ?? 1) - 1, 1);
+  if (Number.isNaN(date.getTime())) return raw;
+  return date
+    .toLocaleDateString("pt-BR", { month: "short", year: "numeric" })
+    .replace(".", "");
+};
+
+/** Texto do período gerado a partir das datas escolhidas no calendário. */
+const buildPeriod = (values: Record<string, unknown>) => {
+  const start = monthLabel(values.start_date);
+  const end = values.is_current ? "Atual" : monthLabel(values.end_date);
+  if (!start) return end || "";
+  return end ? `${start} — ${end}` : start;
+};
+
 const CareerManager = () => {
   const { data, isLoading } = useCareer(true);
   const { data: dashboards } = useDashboards(true);
@@ -46,7 +66,18 @@ const CareerManager = () => {
       fields={[
         { name: "role_title", label: "Cargo", required: true, maxLength: 120 },
         { name: "company", label: "Empresa", required: true, maxLength: 120 },
-        { name: "period", label: "Período", required: true, placeholder: "2022 — Atual" },
+        { name: "start_date", label: "Data de início", type: "date", required: true },
+        {
+          name: "is_current",
+          label: "Trabalho atual (sem data de término)",
+          type: "switch",
+        },
+        {
+          name: "end_date",
+          label: "Data de término",
+          type: "date",
+          showIf: (v) => !v.is_current,
+        },
         { name: "location", label: "Local", maxLength: 120 },
         { name: "sector", label: "Setor / área", maxLength: 120 },
         {
@@ -106,6 +137,7 @@ const CareerManager = () => {
       onCreate={(values) =>
         crud.insert({
           ...values,
+          period: buildPeriod(values),
           slug:
             values.slug ||
             slugify(`${values.role_title ?? ""} ${values.company ?? ""}`) ||
@@ -115,6 +147,7 @@ const CareerManager = () => {
       onUpdate={(id, values) =>
         crud.update(id, {
           ...values,
+          period: buildPeriod(values),
           slug:
             values.slug ||
             slugify(`${values.role_title ?? ""} ${values.company ?? ""}`) ||

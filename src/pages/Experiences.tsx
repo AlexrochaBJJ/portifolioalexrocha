@@ -22,9 +22,9 @@ const endLabel = (period: string) => {
 };
 
 const endValue = (period: string) => {
-  if (CURRENT.test(period)) return 9999;
+  if (CURRENT.test(period)) return Infinity;
   const years = period.match(/\d{4}/g);
-  return years ? Number(years[years.length - 1]) : 0;
+  return years ? Date.parse(`${years[years.length - 1]}-12-31`) : 0;
 };
 
 const Experiences = () => {
@@ -33,8 +33,10 @@ const Experiences = () => {
   const timeline = useMemo(
     () =>
       [...(career ?? [])].sort((a, b) => {
-        const diff = endValue(b.period) - endValue(a.period);
-        return diff !== 0 ? diff : a.sort_order - b.sort_order;
+        const va = a.is_current ? Infinity : a.end_date ? Date.parse(a.end_date) : endValue(a.period);
+        const vb = b.is_current ? Infinity : b.end_date ? Date.parse(b.end_date) : endValue(b.period);
+        if (va !== vb) return vb - va;
+        return a.sort_order - b.sort_order;
       }),
     [career],
   );
