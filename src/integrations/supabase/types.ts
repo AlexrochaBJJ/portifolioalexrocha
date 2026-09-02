@@ -21,8 +21,10 @@ export type Database = {
           dashboard_categories: string[]
           description: string
           employment_type: string | null
+          end_date: string | null
           highlights: string[]
           id: string
+          is_current: boolean
           is_published: boolean
           location: string | null
           logo_url: string | null
@@ -35,6 +37,7 @@ export type Database = {
           short_summary: string
           slug: string
           sort_order: number
+          start_date: string | null
           tools: string[]
           updated_at: string
           webapp_categories: string[]
@@ -45,8 +48,10 @@ export type Database = {
           dashboard_categories?: string[]
           description?: string
           employment_type?: string | null
+          end_date?: string | null
           highlights?: string[]
           id?: string
+          is_current?: boolean
           is_published?: boolean
           location?: string | null
           logo_url?: string | null
@@ -59,6 +64,7 @@ export type Database = {
           short_summary?: string
           slug: string
           sort_order?: number
+          start_date?: string | null
           tools?: string[]
           updated_at?: string
           webapp_categories?: string[]
@@ -69,8 +75,10 @@ export type Database = {
           dashboard_categories?: string[]
           description?: string
           employment_type?: string | null
+          end_date?: string | null
           highlights?: string[]
           id?: string
+          is_current?: boolean
           is_published?: boolean
           location?: string | null
           logo_url?: string | null
@@ -83,6 +91,7 @@ export type Database = {
           short_summary?: string
           slug?: string
           sort_order?: number
+          start_date?: string | null
           tools?: string[]
           updated_at?: string
           webapp_categories?: string[]
