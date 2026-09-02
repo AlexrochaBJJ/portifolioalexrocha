@@ -117,6 +117,7 @@ const CareerManager = () => {
       onCreate={(values) =>
         crud.insert({
           ...values,
+          period: buildPeriod(values),
           slug:
             values.slug ||
             slugify(`${values.role_title ?? ""} ${values.company ?? ""}`) ||
@@ -126,6 +127,7 @@ const CareerManager = () => {
       onUpdate={(id, values) =>
         crud.update(id, {
           ...values,
+          period: buildPeriod(values),
           slug:
             values.slug ||
             slugify(`${values.role_title ?? ""} ${values.company ?? ""}`) ||
