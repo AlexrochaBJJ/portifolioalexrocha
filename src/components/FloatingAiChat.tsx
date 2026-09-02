@@ -148,7 +148,7 @@ const FloatingAiChat = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold font-heading flex items-center gap-1.5">
-                  Rocha
+                  Malu
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
                     IA
                   </span>
