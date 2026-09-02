@@ -22,9 +22,9 @@ const endLabel = (period: string) => {
 };
 
 const endValue = (period: string) => {
-  if (CURRENT.test(period)) return 9999;
+  if (CURRENT.test(period)) return Infinity;
   const years = period.match(/\d{4}/g);
-  return years ? Number(years[years.length - 1]) : 0;
+  return years ? Date.parse(`${years[years.length - 1]}-12-31`) : 0;
 };
 
 const Experiences = () => {
