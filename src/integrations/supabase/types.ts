@@ -14,6 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          browser: string
+          city: string
+          country: string
+          created_at: string
+          details: Json
+          device_type: string
+          duration_ms: number
+          event_type: string
+          id: string
+          ip_hint: string
+          is_admin: boolean
+          label: string
+          language: string
+          os: string
+          page_title: string
+          path: string
+          referrer: string
+          region: string
+          screen_size: string
+          session_id: string
+          timezone: string
+          user_agent: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          visitor_id: string
+        }
+        Insert: {
+          browser?: string
+          city?: string
+          country?: string
+          created_at?: string
+          details?: Json
+          device_type?: string
+          duration_ms?: number
+          event_type?: string
+          id?: string
+          ip_hint?: string
+          is_admin?: boolean
+          label?: string
+          language?: string
+          os?: string
+          page_title?: string
+          path?: string
+          referrer?: string
+          region?: string
+          screen_size?: string
+          session_id: string
+          timezone?: string
+          user_agent?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          visitor_id?: string
+        }
+        Update: {
+          browser?: string
+          city?: string
+          country?: string
+          created_at?: string
+          details?: Json
+          device_type?: string
+          duration_ms?: number
+          event_type?: string
+          id?: string
+          ip_hint?: string
+          is_admin?: boolean
+          label?: string
+          language?: string
+          os?: string
+          page_title?: string
+          path?: string
+          referrer?: string
+          region?: string
+          screen_size?: string
+          session_id?: string
+          timezone?: string
+          user_agent?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          visitor_id?: string
+        }
+        Relationships: []
+      }
       career_experiences: {
         Row: {
           company: string
