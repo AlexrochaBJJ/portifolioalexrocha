@@ -203,7 +203,7 @@ const FloatingAiChat = () => {
                       : streaming && (
                           <span className="inline-flex items-center gap-2 text-primary">
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            Rocha está pensando...
+                            Malu está pensando...
                           </span>
                         )}
                   </div>
@@ -224,7 +224,7 @@ const FloatingAiChat = () => {
                       ask(input);
                     }
                   }}
-                  placeholder="Pergunte para a Rocha..."
+                  placeholder="Pergunte para a Malu..."
                   maxLength={1000}
                   rows={1}
                   className="resize-none font-body min-h-[40px]"
@@ -271,7 +271,7 @@ const FloatingAiChat = () => {
               className="hidden sm:flex items-center gap-2 mb-2"
             >
               <div className="glass-card px-3 py-2 rounded-xl rounded-br-sm text-xs text-foreground shadow-lg border-primary/20">
-                <p className="font-semibold">Fale com a Rocha</p>
+                <p className="font-semibold">Fale com a Malu</p>
                 <p className="text-muted-foreground">IA do portfólio</p>
               </div>
             </motion.div>
