@@ -11,6 +11,7 @@ import ContactManager from "@/components/admin/ContactManager";
 import WebProjectsManager from "@/components/admin/WebProjectsManager";
 import DashboardsManager from "@/components/admin/DashboardsManager";
 import FlowchartsManager from "@/components/admin/FlowchartsManager";
+import AccessReport from "@/components/admin/AccessReport";
 import { useAuth } from "@/hooks/useAuth";
 
 const Admin = () => {
@@ -74,6 +75,7 @@ const Admin = () => {
               <TabsTrigger value="webapps">Aplicações Web</TabsTrigger>
               <TabsTrigger value="dashboards">Dashboards</TabsTrigger>
               <TabsTrigger value="flowcharts">Fluxogramas</TabsTrigger>
+              <TabsTrigger value="access">Relatório de acessos</TabsTrigger>
             </TabsList>
 
             <div className="mt-8">
@@ -97,6 +99,9 @@ const Admin = () => {
               </TabsContent>
               <TabsContent value="flowcharts">
                 <FlowchartsManager />
+              </TabsContent>
+              <TabsContent value="access">
+                <AccessReport />
               </TabsContent>
             </div>
           </Tabs>

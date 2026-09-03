@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ExternalLink, Globe } from "lucide-react";
+import { trackEvent } from "@/lib/tracking";
 import SiteLayout from "@/components/SiteLayout";
 import { useWebProjectById } from "@/hooks/useContent";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -84,7 +85,12 @@ const WebAppDetail = () => {
               </div>
 
               <Button size="lg" asChild>
-                <a href={project.url} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent("Abriu aplicação web", { app: project.title })}
+                >
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Acessar aplicação
                 </a>

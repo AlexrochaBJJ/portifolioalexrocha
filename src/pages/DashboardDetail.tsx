@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ExternalLink, Maximize2 } from "lucide-react";
+import { trackEvent } from "@/lib/tracking";
 import SiteLayout from "@/components/SiteLayout";
 import DashboardViewer from "@/components/DashboardViewer";
 import { useDashboardById } from "@/hooks/useContent";
@@ -71,13 +72,24 @@ const DashboardDetail = () => {
               )}
 
               <div className="flex flex-wrap gap-3">
-                <Button onClick={() => setViewing(true)} size="lg">
+                <Button
+                  onClick={() => {
+                    trackEvent("Abriu dashboard", { dashboard: dashboard.title });
+                    setViewing(true);
+                  }}
+                  size="lg"
+                >
                   <Maximize2 className="w-4 h-4 mr-2" />
                   Abrir dashboard
                 </Button>
                 {dashboard.source_type !== "html" && dashboard.embed_url && (
                   <Button variant="outline" size="lg" asChild>
-                    <a href={dashboard.embed_url} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={dashboard.embed_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackEvent("Abriu no Power BI", { dashboard: dashboard.title })}
+                    >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       Abrir no Power BI
                     </a>
@@ -101,13 +113,24 @@ const DashboardDetail = () => {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <Button onClick={() => setViewing(true)} size="lg">
+                <Button
+                  onClick={() => {
+                    trackEvent("Abriu dashboard", { dashboard: dashboard.title });
+                    setViewing(true);
+                  }}
+                  size="lg"
+                >
                   <Maximize2 className="w-4 h-4 mr-2" />
                   Abrir dashboard
                 </Button>
                 {dashboard.source_type !== "html" && dashboard.embed_url && (
                   <Button variant="outline" size="lg" asChild>
-                    <a href={dashboard.embed_url} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={dashboard.embed_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackEvent("Abriu no Power BI", { dashboard: dashboard.title })}
+                    >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       Abrir no Power BI
                     </a>

@@ -4,6 +4,7 @@ import { Bot, FileDown, Loader2, MessageSquare, Send, Sparkles, X } from "lucide
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { trackEvent } from "@/lib/tracking";
 import { streamPortfolioAi, type AiMessage } from "@/lib/aiChat";
 import { buildReportDocx, downloadBlob } from "@/lib/reportDocx";
 
@@ -77,6 +78,7 @@ const FloatingAiChat = () => {
     setMessages([...history, { role: "assistant", content: "" }]);
     setInput("");
     setStreaming(true);
+    trackEvent("Perguntou para a Malu", { pergunta: text.slice(0, 120) });
 
     try {
       await streamPortfolioAi(history, (delta) => {
@@ -103,6 +105,7 @@ const FloatingAiChat = () => {
   const generateReport = async () => {
     if (streaming || reporting) return;
     setReporting(true);
+    trackEvent("Baixou relatório da Malu");
     try {
       const markdown = await streamPortfolioAi(
         [{ role: "user", content: REPORT_PROMPT }],
@@ -279,7 +282,10 @@ const FloatingAiChat = () => {
         </AnimatePresence>
 
         <button
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            if (!open) trackEvent("Abriu o chat da Malu");
+            setOpen((v) => !v);
+          }}
           aria-label={open ? "Fechar assistente de IA" : "Abrir assistente de IA"}
           className="relative group h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-xl flex items-center justify-center hover:scale-105 transition-transform ai-rocha-pulse"
         >
