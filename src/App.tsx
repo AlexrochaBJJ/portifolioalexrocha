@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ScrollToTop from "@/components/ScrollToTop";
+import usePageTracking from "@/hooks/usePageTracking";
 import About from "./pages/About";
 import Dashboards from "./pages/Dashboards";
 import DashboardDetail from "./pages/DashboardDetail";
@@ -33,15 +34,19 @@ const queryClient = new QueryClient({
 });
 
 
-const App = () => (
+const AppRoutes = () => {
+  usePageTracking();
+  return (
+    <>
+      <ScrollToTop />
+      <Routes>
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <ScrollToTop />
-          <Routes>
+
             <Route path="/" element={<About />} />
             <Route path="/dashboards" element={<Dashboards />} />
             <Route path="/dashboards/:id" element={<DashboardDetail />} />
@@ -56,8 +61,13 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+};
+
+const App = () => (
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
