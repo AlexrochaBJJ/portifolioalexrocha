@@ -33,34 +33,27 @@ const queryClient = new QueryClient({
   },
 });
 
-
 const AppRoutes = () => {
   usePageTracking();
+
   return (
     <>
       <ScrollToTop />
       <Routes>
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
+        <Route path="/" element={<About />} />
+        <Route path="/dashboards" element={<Dashboards />} />
+        <Route path="/dashboards/:id" element={<DashboardDetail />} />
+        <Route path="/aplicacoes" element={<WebApps />} />
+        <Route path="/aplicacoes/:id" element={<WebAppDetail />} />
 
-            <Route path="/" element={<About />} />
-            <Route path="/dashboards" element={<Dashboards />} />
-            <Route path="/dashboards/:id" element={<DashboardDetail />} />
-            <Route path="/aplicacoes" element={<WebApps />} />
-            <Route path="/aplicacoes/:id" element={<WebAppDetail />} />
-
-            <Route path="/experiencias" element={<Experiences />} />
-            <Route path="/experiencias/:slug" element={<ExperienceDetail />} />
-            <Route path="/fluxogramas/:slug" element={<FlowchartDetail />} />
-            <Route path="/assistente" element={<Assistant />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/admin" element={<Admin />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="/experiencias" element={<Experiences />} />
+        <Route path="/experiencias/:slug" element={<ExperienceDetail />} />
+        <Route path="/fluxogramas/:slug" element={<FlowchartDetail />} />
+        <Route path="/assistente" element={<Assistant />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/admin" element={<Admin />} />
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
@@ -68,6 +61,13 @@ const AppRoutes = () => {
 };
 
 const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
